@@ -59,20 +59,18 @@ var MovieDatabase  = (function(){
 
 		/**
 		 * Get movies by genre 
-		 * @param  {String}					should be more?
+		 * @param  {...String}			any number of values	
 		 * @return {Array}
 		 */
     getMoviesByGenre: function(...genres){
 
-    	// Create an array of the genres
+    	// Create an array of the genre-arguments
     	var genresArray = [];
     	for(let genre of genres){
     		genresArray.push(genre);
     	}
-    	console.log(genresArray);
-    	var arr1 = genresArray;
 
-    	// Kollar att alla värden i arr1 finns i arr2
+    	// Check if all values in arr1 is in arr2
     	function containsAll(arr1, arr2){
    			return arr1.every(function(v,i) {
       		return arr2.indexOf(v) !== -1; 
@@ -81,87 +79,41 @@ var MovieDatabase  = (function(){
 			}
 
     	return movies.filter((movie) => {
-
-    		var arr2 = movie.genres;
-    		console.log(movie);
-
-    		if (containsAll(arr1, arr2)) {  
- 				  return movie;
+    		if (containsAll(genresArray, movie.genres)) {  
+ 				  return true;
 				} else {
-				   console.log(false);
+				   //console.log(false);
 				}
-
 			});
-
     },
 
-
-
-
-
+  	/**
+  	 * Calculate the rating of a movie
+  	 * @param  {Object}
+  	 * @return {Number}					rating 
+  	 */
+	 	getRating: function(movie){
+			var sumOfRatings = movie.ratings.reduce((total, rating) => {
+				return total + rating;
+			}, 0);
+			var numberOfRatings = movie.ratings.length;
+			return sumOfRatings/numberOfRatings;
+		},
 
     /**
-     * Get the ?????
+     * Get the movie with highest ratings
      * @return {Object}
      */
-//     getTopRatedMovie: function(){
-
-// // function getMean(movie){
-// //     	for(var i= 0; i < movies.length; i++){
-// //     	var totalScores = movies[i].ratings.reduce((acc, val) => {
-// //     		return (acc + val);
-// //     	}, 0);
-
-// //     	var numberOfScores = movies[i].ratings.length;
-
-// //     	console.log(totalScores/numberOfScores);
-// //     	return (totalScores/numberOfScores);
-// // 			}
-// // }
-
-// 		function getMean(movie){
-//     	var totalScores = movie.ratings.reduce((acc, val) => {
-//     		return (acc + val);
-//     	}, 0);
-
-//     	var numberOfScores = movie.ratings.length;
-
-//     	console.log(totalScores/numberOfScores);
-//     	return (totalScores/numberOfScores);
-// 		}
-
-// 		var obj = 		{
-// 	    title: 'Inception',
-// 	    year: 2010,
-// 	    genres: ['Action', 'Adventure', 'Sci-Fi'],
-// 	    ratings: [3, 4, 5, 4]
-// 		};
-
-// 		movies.forEach(getMean(movie));
-
-
-	// movies.reduce((acc, val) => {
-	//       return getMean(acc) > getMean(val) ? acc : val; 
-	//     }, 0);
-
-
-    	// return (totalScores/movies[0].ratings.length).toFixed(0);
-
-    // 	return movies
-	   //  .reduce((acc, val) => {
-	   //    return acc.year > val.year ? acc : val; 
-	   //  }, 0);
-	    
-    // }, 
-
-    // Only for testing
-    getRating: function(){
-    	var totalScores = movies[0].ratings.reduce((acc, val) => {
-    		return (acc + val);
-    	}, 0);
-    	var numberOfScores = movies[0].ratings.length;
-    	return (totalScores/numberOfScores);
-    }, 
+    getTopRatedMovie: function(){
+    	return movies.reduce((prev, curr) => {
+    		if(this.getRating(prev) < this.getRating(curr)){
+    			return curr;
+    		}
+    		else {
+    			return prev;
+    		}
+    	});
+		},
 
     // Only for testing
 		showmovies: function() {
@@ -180,8 +132,8 @@ var MovieDatabase  = (function(){
 })();
 
 
-console.log(MovieDatabase.getMoviesByGenre('Drama', 'Comedy'));
-
+//console.log(MovieDatabase.getMoviesByGenre('Drama'));
+//console.log(MovieDatabase.getTopRatedMovie());
 
 /*============================================
 =              Class Constructor             =
@@ -208,8 +160,11 @@ class Movie {
  * Object created with the Class constructor. 
  * @type {Movie}
  */
-const theLobster = new Movie('The Lobster', 2015,['Comedy', 'Drama', 'Romance', 'Sci-Fi']);
+var theLobster = new Movie('The Lobster', 2015,['Comedy', 'Drama', 'Romance', 'Sci-Fi']);
+theLobster.ratings = [5, 7, 4];
+
 MovieDatabase.addNewMovie(theLobster);
+
 
 
 
