@@ -9,7 +9,7 @@ var MovieDatabase  = (function(){
 	 * All the movies
 	 * @type {Array}
 	 */
-	var moviesArray = [
+	var movies = [
 
 		{
 	    title: 'The Lobster',
@@ -34,112 +34,144 @@ var MovieDatabase  = (function(){
 	return {
 
 		// Only for testing
-		returnMoviesArray: () => {
-			return moviesArray;
+		returnmovies: () => {
+			return movies;
 		},
 
-		// Only for testing
-		findMovie: function(title){
-			return moviesArray.filter((movie) => {
-				return movie.title == title;
-			});
-		},
 
 		// Adds new movie to the array (why is it better to create a new array?)
 		addNewMovie: function(newMovie){
-      var newMoviesArray = moviesArray;
+      var newMoviesArray = movies;
       newMoviesArray.push(newMovie);
-      moviesArray = newMoviesArray;
+      movies = newMoviesArray;
     },
 
     /**
-     * Get by year
+     * Get movies by year
      * @param  {Number}		Year
      * @return {Array}		Array of all movie released that year  (should return a list)
      */
     getMoviesThisYear: function(year){
-    	return moviesArray.filter((movie) => {
+    	return movies.filter((movie) => {
     		return movie.year == year;
     	});
     }, 
+
+		/**
+		 * Get movies by genre 
+		 * @param  {String}					should be more?
+		 * @return {Array}
+		 */
+    getMoviesByGenre: function(...genres){
+
+    	// Create an array of the genres
+    	var genresArray = [];
+    	for(let genre of genres){
+    		genresArray.push(genre);
+    	}
+    	console.log(genresArray);
+    	var arr1 = genresArray;
+
+    	// Kollar att alla värden i arr1 finns i arr2
+    	function containsAll(arr1, arr2){
+   			return arr1.every(function(v,i) {
+      		return arr2.indexOf(v) !== -1; 
+   			});
+
+			}
+
+    	return movies.filter((movie) => {
+
+    		var arr2 = movie.genres;
+    		console.log(movie);
+
+    		if (containsAll(arr1, arr2)) {  
+ 				  return movie;
+				} else {
+				   console.log(false);
+				}
+
+			});
+
+    },
+
+
+
+
+
 
     /**
      * Get the ?????
      * @return {Object}
      */
-    getTopRatedMovie: function(){
+//     getTopRatedMovie: function(){
 
-// function getMean(movie){
-//     	for(var i= 0; i < moviesArray.length; i++){
-//     	var totalScores = moviesArray[i].ratings.reduce((acc, val) => {
+// // function getMean(movie){
+// //     	for(var i= 0; i < movies.length; i++){
+// //     	var totalScores = movies[i].ratings.reduce((acc, val) => {
+// //     		return (acc + val);
+// //     	}, 0);
+
+// //     	var numberOfScores = movies[i].ratings.length;
+
+// //     	console.log(totalScores/numberOfScores);
+// //     	return (totalScores/numberOfScores);
+// // 			}
+// // }
+
+// 		function getMean(movie){
+//     	var totalScores = movie.ratings.reduce((acc, val) => {
 //     		return (acc + val);
 //     	}, 0);
 
-//     	var numberOfScores = moviesArray[i].ratings.length;
+//     	var numberOfScores = movie.ratings.length;
 
 //     	console.log(totalScores/numberOfScores);
 //     	return (totalScores/numberOfScores);
-// 			}
-// }
+// 		}
 
-		function getMean(movie){
-    	var totalScores = movie.ratings.reduce((acc, val) => {
-    		return (acc + val);
-    	}, 0);
+// 		var obj = 		{
+// 	    title: 'Inception',
+// 	    year: 2010,
+// 	    genres: ['Action', 'Adventure', 'Sci-Fi'],
+// 	    ratings: [3, 4, 5, 4]
+// 		};
 
-    	var numberOfScores = movie.ratings.length;
-
-    	console.log(totalScores/numberOfScores);
-    	return (totalScores/numberOfScores);
-		}
-
-		var obj = 		{
-	    title: 'Inception',
-	    year: 2010,
-	    genres: ['Action', 'Adventure', 'Sci-Fi'],
-	    ratings: [3, 4, 5, 4]
-		};
-
-		moviesArray.forEach(getMean(movie));
+// 		movies.forEach(getMean(movie));
 
 
-	// moviesArray.reduce((acc, val) => {
+	// movies.reduce((acc, val) => {
 	//       return getMean(acc) > getMean(val) ? acc : val; 
 	//     }, 0);
 
 
-    	// return (totalScores/moviesArray[0].ratings.length).toFixed(0);
+    	// return (totalScores/movies[0].ratings.length).toFixed(0);
 
-    	return moviesArray
-	    .reduce((acc, val) => {
-	      return acc.year > val.year ? acc : val; 
-	    }, 0);
+    // 	return movies
+	   //  .reduce((acc, val) => {
+	   //    return acc.year > val.year ? acc : val; 
+	   //  }, 0);
 	    
-    }, 
+    // }, 
 
     // Only for testing
     getRating: function(){
-    	var totalScores = moviesArray[0].ratings.reduce((acc, val) => {
+    	var totalScores = movies[0].ratings.reduce((acc, val) => {
     		return (acc + val);
     	}, 0);
-    	var numberOfScores = moviesArray[0].ratings.length;
+    	var numberOfScores = movies[0].ratings.length;
     	return (totalScores/numberOfScores);
     }, 
 
     // Only for testing
-		showMoviesArray: function() {
+		showmovies: function() {
 			// console.log(this);									// MovieDatabase-objekt
-			return moviesArray.map((movie) =>{
+			return movies.map((movie) =>{
 				// console.log(movie);								// Object {title: "The Lobster", year: 2015, genr.... etc
 				return `Title: ${movie.title}, Year: ${movie.year}, Genres: ${movie.genres}`;
 			});
 		},
 
-    // addRating: function(movie, rating){
-    //   var newRatingArray = movie.ratingArray;
-    //   newRatingArray.push(rating);
-    //   ratingArray = newRatingArray;
-    // },
 
 	// end of return
 	};
@@ -147,15 +179,8 @@ var MovieDatabase  = (function(){
 // end of MovieDatabase
 })();
 
-console.log(MovieDatabase.getTopRatedMovie());
 
-// console.log(MovieDatabase.showMoviesArray(MovieDatabase.returnMoviesArray()));
-
-// console.log(MovieDatabase.findMovie('Her'));
-
-// console.log("År 2013: ");
-// console.log(MovieDatabase.getMoviesThisYear(2013));
-
+console.log(MovieDatabase.getMoviesByGenre('Drama', 'Comedy'));
 
 
 /*============================================
@@ -179,7 +204,6 @@ class Movie {
 	}
 }
 
-
 /**
  * Object created with the Class constructor. 
  * @type {Movie}
@@ -187,7 +211,5 @@ class Movie {
 const theLobster = new Movie('The Lobster', 2015,['Comedy', 'Drama', 'Romance', 'Sci-Fi']);
 MovieDatabase.addNewMovie(theLobster);
 
-// console.log(theLobster.getMovie());
-// console.log(MovieDatabase.returnMoviesArray());
 
 
