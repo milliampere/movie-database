@@ -12,16 +12,16 @@ var MovieDatabase  = (function(){
 	var movies = [
 
 		{
-	    title: 'The Lobster',
-	    year: 2015,
-	    genres: ['Comedy', 'Drama', 'Romance', 'Sci-Fi'],
-	    ratings: [4, 2, 3, 2]
+	    title: 'The Prestige',
+	    year: 2006,
+	    genres: ['Drama', 'Mystery', 'Sci-Fi'],
+	    ratings: [4, 5, 5, 5]
 		},
 		{
 	    title: 'Her',
 	    year: 2013,
 	    genres: ['Drama', 'Romance', 'Sci-Fi'],
-	    ratings: [5, 4, 5, 5]
+	    ratings: [5, 4, 3, 4]
 		},
 		{
 	    title: 'Inception',
@@ -29,12 +29,18 @@ var MovieDatabase  = (function(){
 	    genres: ['Action', 'Adventure', 'Sci-Fi'],
 	    ratings: [3, 4, 5, 4]
 		},
+		{
+	    title: 'Interstellar',
+	    year: 2014,
+	    genres: ['Adventure', 'Drama', 'Sci-Fi'],
+	    ratings: [3, 4, 3, 2]
+		},
 	];
 
 	return {
 
 		// Only for testing
-		returnmovies: () => {
+		returnMovies: () => {
 			return movies;
 		},
 
@@ -58,7 +64,7 @@ var MovieDatabase  = (function(){
     }, 
 
 		/**
-		 * Get movies by genre 
+		 * Get movies by genres 
 		 * @param  {...String}			any number of values	
 		 * @return {Array}
 		 */
@@ -115,13 +121,43 @@ var MovieDatabase  = (function(){
     	});
 		},
 
-    // Only for testing
-		showmovies: function() {
-			// console.log(this);									// MovieDatabase-objekt
-			return movies.map((movie) =>{
-				// console.log(movie);								// Object {title: "The Lobster", year: 2015, genr.... etc
-				return `Title: ${movie.title}, Year: ${movie.year}, Genres: ${movie.genres}`;
-			});
+    // Appends albums to main
+		displayMovies: function() {
+			var movieList = document.getElementById('movieList');
+			var htmlChunk = '';
+
+			for(var movie of movies){
+				var rating = this.getRating(movie);
+				htmlChunk += `
+					<div class="col-sm-3">
+						<div class="panel panel-default">
+							<div class="panel-heading"><h3 class="panel-title"><span class="glyphicon glyphicon-film"></span> ${movie.title}</h3></div>
+							<div class="panel-body"> 
+								<p>Year: ${movie.year} </p> 
+								<p>Genres: ${movie.genres} </p>
+								<p>Rating: ${rating} </p>
+							</div>
+							<div class="panel-footer">Movie Database</div>
+						</div>
+					</div>
+				`;
+			}
+			movieList.innerHTML = htmlChunk;
+
+		},
+
+		// Appends albums to list
+		listMovies: function() {
+			var movieList = document.getElementById('list-group');
+			var htmlChunk = '';
+
+			for(var movie of movies){
+				htmlChunk += `
+					<li class="list-group-item">${movie.title}</li>
+				`;
+			}
+			movieList.innerHTML = htmlChunk;
+
 		},
 
 
@@ -134,10 +170,13 @@ var MovieDatabase  = (function(){
 
 //console.log(MovieDatabase.getMoviesByGenre('Drama'));
 //console.log(MovieDatabase.getTopRatedMovie());
+MovieDatabase.displayMovies();
+MovieDatabase.listMovies();
 
 /*============================================
 =              Class Constructor             =
 ============================================*/
+
 
 /**
  * Class constructor that creates a new movie
