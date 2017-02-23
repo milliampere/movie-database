@@ -15,13 +15,15 @@ var MovieDatabase  = (function(){
 	    title: 'The Prestige',
 	    year: 2006,
 	    genres: ['Drama', 'Mystery', 'Sci-Fi'],
-	    ratings: [4, 5, 5, 5]
+	    ratings: [4, 5, 5, 5], 
+	    image: "http://www.hidefninja.com/community/attachments/movie-night-clipart-9cp4q9xce-jpeg.279121/"
 		},
 		{
 	    title: 'Her',
 	    year: 2013,
 	    genres: ['Drama', 'Romance', 'Sci-Fi'],
-	    ratings: [5, 4, 3, 4]
+	    ratings: [5, 4, 3, 4], 
+	    image: "http://www.hidefninja.com/community/attachments/movie-night-clipart-9cp4q9xce-jpeg.279121/"
 		},
 		{
 	    title: 'Inception',
@@ -36,6 +38,7 @@ var MovieDatabase  = (function(){
 	    ratings: [3, 4, 3, 2]
 		},
 	];
+
 
 	return {
 
@@ -130,12 +133,13 @@ var MovieDatabase  = (function(){
 				var rating = this.getRating(movie);
 				htmlChunk += `
 					<div class="col-sm-3">
-						<div class="panel panel-default">
+						<div class="panel panel-info">
 							<div class="panel-heading"><h3 class="panel-title"><span class="glyphicon glyphicon-film"></span> ${movie.title}</h3></div>
 							<div class="panel-body"> 
 								<p>Year: ${movie.year} </p> 
 								<p>Genres: ${movie.genres} </p>
 								<p>Rating: ${rating} </p>
+								<button type="button" class="btn btn-default rateMovieButton">Rate this movie</button>
 							</div>
 							<div class="panel-footer">Movie Database</div>
 						</div>
@@ -153,12 +157,20 @@ var MovieDatabase  = (function(){
 
 			for(var movie of movies){
 				htmlChunk += `
-					<li class="list-group-item">${movie.title}</li>
+					<li class="list-group-item"><span class="glyphicon glyphicon-film"></span> ${movie.title}</li>
 				`;
 			}
 			movieList.innerHTML = htmlChunk;
 
 		},
+
+		rateMovie: function(movie, rating){
+			movie.ratings.push(rating);
+			console.log(movie.ratings);
+			update();
+		},
+
+
 
 
 	// end of return
@@ -168,15 +180,10 @@ var MovieDatabase  = (function(){
 })();
 
 
-//console.log(MovieDatabase.getMoviesByGenre('Drama'));
-//console.log(MovieDatabase.getTopRatedMovie());
-MovieDatabase.displayMovies();
-MovieDatabase.listMovies();
 
 /*============================================
 =              Class Constructor             =
 ============================================*/
-
 
 /**
  * Class constructor that creates a new movie
@@ -185,10 +192,11 @@ MovieDatabase.listMovies();
  * @param {Array} genres 		Genres of movie
  */
 class Movie {
-	constructor(title, year, genres) {
+	constructor(title, year, genres, ratings) {
 		this.title = title;
 		this.year = year;
 		this.genres = genres; 
+		this.ratings = ratings;
 	}
 	getMovie() {
 		return `(${this.title}, ${this.year}, ${this.genres})`;
@@ -201,9 +209,56 @@ class Movie {
  */
 var theLobster = new Movie('The Lobster', 2015,['Comedy', 'Drama', 'Romance', 'Sci-Fi']);
 theLobster.ratings = [5, 7, 4];
-
 MovieDatabase.addNewMovie(theLobster);
 
+// Submit
+document.getElementById('addMovieButton').addEventListener("click", addMovie);
+
+// Update
+document.getElementById('updateButton').addEventListener("click", update);
 
 
 
+
+	function addMovie(){
+		var titleInput = document.getElementById('titleInput').value;
+		var yearInput = parseInt(document.getElementById('yearInput').value);
+
+		// Check if input field is empty
+		if(titleInput === ""){
+			alert("Well... a movie needs a title.");
+		}
+		else {
+
+			console.log(titleInput, yearInput);
+			var newMovie = new Movie(titleInput, yearInput, ['Drama', 'Comedy'], [5]);
+			MovieDatabase.addNewMovie(newMovie);
+
+			update();
+		}
+	} 
+
+	// Update/load UI
+	function update(){
+		console.log(MovieDatabase.returnMovies());
+		MovieDatabase.displayMovies();
+		MovieDatabase.listMovies();
+
+		// Rate
+		// var rateMovieButtons = document.getElementsByClassName('rateMovieButton');
+		// for(var i = 0; i < rateMovieButtons.length; i++) { 
+		// 	addEventListener("click", function() {
+		// 		MovieDatabase.rateMovie('Her', 5);
+		// 	});
+		// }
+	} 
+
+
+
+
+
+
+update();
+
+
+MovieDatabase.rateMovie(theLobster, 10);
