@@ -25,37 +25,61 @@ html, body {
 
 	<main class="row">
 
-		<div class="col-sm-5">
-			<div class="panel panel-info">
-			  <div class="panel-heading"><h3 class="panel-title">All movies</h3></div>
+		<div class="col-sm-4">
+			<div class="panel panel-default">
+			  <div class="panel-heading"><h3 class="panel-title">Sort by genre</h3></div>
 			  <div class="panel-body">
-			    <p>Popcorn, popcorn, popcorn, popcorn, popcorn, popcorn, popcorn, popcorn, popcorn, lala. </p>
+			    <p>Sort by genre</p>
+
+					  <div id="genresList" class="checkbox">
+							<label class="checkbox-inline">
+							  <input type="checkbox" id="inlineCheckbox1" value="option1"> Drama
+							</label>
+							<label class="checkbox-inline">
+							  <input type="checkbox" id="inlineCheckbox2" value="option2"> Action
+							</label>
+							<label class="checkbox-inline">
+							  <input type="checkbox" id="inlineCheckbox3" value="option3"> Adventure
+							</label>
+					  </div>	
+					  <button type="button" class="btn btn-default" id="updateButton">Update</button>				
+
 			  </div>
-			  <ul class="list-group" id="list-group">
-			  </ul>
+<!-- 			  <ul class="list-group" id="list-group">
+			  </ul> -->
 			</div>
 		</div>
 
-		<div class="col-sm-2">
-			<a href="#" class="thumbnail"><img src="http://www.hidefninja.com/community/attachments/movie-night-clipart-9cp4q9xce-jpeg.279121/" alt="movie"></a>
-
-			<button type="button" class="btn btn-default" id="updateButton">Update</button>
-
+		<div class="col-sm-4">
+			<div class="panel panel-default">
+				<div class="panel-heading"><h3 class="panel-title">Ratings</h3></div>	
+				<div class="panel-body">
+					<h5>Highest rating</h5>
+					<div id="highestRatingList"></div>
+					<h5>Lowest rating</h5>
+					<div id="lowestRatingList"></div>
+				</div>	
+				<!-- <a href="#" class="thumbnail"><img src="http://www.hidefninja.com/community/attachments/movie-night-clipart-9cp4q9xce-jpeg.279121/" alt="movie"></a> -->
+			</div>
 		</div>
 
 
-		<div class="col-sm-5">
-			<div class="panel panel-info">
+		<div class="col-sm-4">
+			<div class="panel panel-default">
 			<div class="panel-heading"><h3 class="panel-title">Add movie</h3></div>
 				<div class="panel-body">
 					<form>
 					  <div class="form-group">
-					    <label for="titleInput">Movie title</label>
-					    <input type="text" class="form-control" id="titleInput" placeholder="Title">
+					    <label for="title">Movie title</label>
+					    <input type="text" class="form-control" id="title" placeholder="Title">
 					  </div>
 					  <div class="form-group">
-					    <label for="yearInput">Release year</label>
-					    <input type="text" class="form-control" id="yearInput" placeholder="Year">
+					    <label for="year">Release year</label>
+<!-- 					    <select id="year" class="form-control" name="year">
+								<option value="2007">2007</option>
+								<option value="2006">2006</option>
+					    </select> -->
+					    <input type="text" class="form-control" id="year" placeholder="Year">
 					  </div>
 					  <div class="checkbox">
 							<label class="checkbox-inline">
@@ -68,7 +92,7 @@ html, body {
 							  <input type="checkbox" id="inlineCheckbox3" value="option3"> Adventure
 							</label>
 					  </div>
-					  <label for="ratingInput">Rating</label>
+					  <!-- <label for="ratingInput">Rating</label>
 					  <select class="form-control" id="ratingInput">
 					  	<option>0</option>
 						  <option>1</option>
@@ -81,8 +105,8 @@ html, body {
 						  <option>8</option>
 						  <option>9</option>
 						  <option>10</option>
-						</select>
-					  <button type="button" class="btn btn-default" id="addMovieButton">Submit</button>
+						</select> -->
+					  <button type="button" class="btn btn-default" id="addMovieButton">Go</button>
 					</form>
 				</div>
 		</div>

@@ -1,3 +1,11 @@
+/**
+ * Eventlistener to apply click-functions and load content at init
+ */
+document.addEventListener("DOMContentLoaded", function(event) {
+	document.getElementById('addMovieButton').addEventListener('click', MovieDatabase.addMovie);
+	document.getElementById('updateButton').addEventListener('click', MovieDatabase.loadUI);
+  MovieDatabase.loadUI(); //Fill index with movies
+});
 
 /**
  * The Movie Database (module pattern)
@@ -39,6 +47,12 @@ var MovieDatabase  = (function(){
 		},
 	];
 
+	var genres = [
+		'Action',
+		'Adventure',
+		'Drama',
+		'Sci-Fi',
+	];
 
 	return {
 
@@ -124,24 +138,41 @@ var MovieDatabase  = (function(){
     	});
 		},
 
+		getWorstRatedMovie: function(){
+    	return movies.reduce((prev, curr) => {
+    		if(this.getRating(prev) > this.getRating(curr)){
+    			return curr;
+    		}
+    		else {
+    			return prev;
+    		}
+    	});
+		},
+
     // Appends albums to main
 		displayMovies: function() {
 			var movieList = document.getElementById('movieList');
-			var htmlChunk = '';
+			let htmlChunk = '';
 
 			for(var movie of movies){
 				var rating = this.getRating(movie);
+				
+				// Space between genres
+				var genreList = '';
+				for(var genre of movie.genres){
+					genreList += (genre + ", ");
+				}
+
 				htmlChunk += `
-					<div class="col-sm-3">
+					<div class="movie col-sm-3">
 						<div class="panel panel-info">
 							<div class="panel-heading"><h3 class="panel-title"><span class="glyphicon glyphicon-film"></span> ${movie.title}</h3></div>
-							<div class="panel-body"> 
+							<div class="panel-body"><p>Title: ${movie.title} </p>
 								<p>Year: ${movie.year} </p> 
-								<p>Genres: ${movie.genres} </p>
 								<p>Rating: ${rating} </p>
 								<button type="button" class="btn btn-default rateMovieButton">Rate this movie</button>
 							</div>
-							<div class="panel-footer">Movie Database</div>
+							<div class="panel-footer"><p>Genres: ${genreList} <br><a href="#">Lägg till genre</a></p></div>
 						</div>
 					</div>
 				`;
@@ -151,23 +182,104 @@ var MovieDatabase  = (function(){
 		},
 
 		// Appends albums to list
-		listMovies: function() {
-			var movieList = document.getElementById('list-group');
-			var htmlChunk = '';
+		// listMovies: function() {
+		// 	var movieList = document.getElementById('list-group');
+		// 	var htmlChunk = '';
 
-			for(var movie of movies){
-				htmlChunk += `
-					<li class="list-group-item"><span class="glyphicon glyphicon-film"></span> ${movie.title}</li>
-				`;
-			}
-			movieList.innerHTML = htmlChunk;
+		// 	for(var movie of movies){
+		// 		htmlChunk += `
+		// 			<li class="list-group-item"><span class="glyphicon glyphicon-film"></span> ${movie.title}</li>
+		// 		`;
+		// 	}
+		// 	movieList.innerHTML = htmlChunk;
+		// },
 
-		},
-
+		/**
+		 * Rate movie
+		 * @param  {Object}
+		 * @param  {Number}
+		 * @return 
+		 */
 		rateMovie: function(movie, rating){
 			movie.ratings.push(rating);
-			console.log(movie.ratings);
-			update();
+		},
+
+
+		// Load UI
+		loadUI: function(){
+			MovieDatabase.displayMovies();
+			MovieDatabase.showGenres();
+
+			getHighestRating();
+			getLowestRating();
+
+			// Highest rating
+			function getHighestRating(){
+				var highestRatingList = document.getElementById('highestRatingList');
+				var movieHighestRating = MovieDatabase.getTopRatedMovie();
+				let htmlChunk = '';
+				htmlChunk = `<ul class="list-group"><li class="list-group-item"><span class="glyphicon glyphicon-film"></span> ${movieHighestRating.title}</li></ul>`;
+				highestRatingList.innerHTML = htmlChunk;
+			}
+
+			//Lowest rating
+			function getLowestRating(){
+				var lowestRatingList = document.getElementById('lowestRatingList');
+				var movieLowestRating = MovieDatabase.getWorstRatedMovie();
+				let htmlChunk = '';
+				htmlChunk = `<ul class="list-group"><li class="list-group-item"><span class="glyphicon glyphicon-film"></span> ${movieLowestRating.title}</li></ul>`;
+				lowestRatingList.innerHTML = htmlChunk;
+			}
+
+			
+			//MovieDatabase.addIdToInputField();
+
+			//Rate
+			var rateMovieButtons = document.getElementsByClassName('rateMovieButton');
+			for(var i = 0; i < rateMovieButtons.length; i++) { 
+				//console.log(rateMovieButtons[i].parentElement.firstChild.innerHTML);
+				rateMovieButtons[i].addEventListener("click", function() {
+					MovieDatabase.rateMovie(theLobster, 5);
+				});
+			}
+		}, 
+
+		/**
+		 * 
+		 */
+		addMovie: function(){
+			var title = document.getElementById('title').value;
+			var year = parseInt(document.getElementById('year').value);
+
+			// Check if input values are valid
+			if(title === ""){
+				alert("Well... a movie needs a title.");
+			}
+			else if(isNaN(year)){
+				alert("Year in numbers pls");
+			}
+			else {
+				var newMovie = new Movie(title, year, ['Drama', 'Comedy'], [5]);
+				MovieDatabase.addNewMovie(newMovie);
+				MovieDatabase.loadUI();
+			}
+		}, 
+
+
+		addIdToMovie: function(){
+			//var movieList = document.getElementsByClassName('movie');
+		},
+
+		showGenres: function(){
+			var genresList = document.getElementById('genresList');
+			let htmlChunk = '';
+			for(var genre of genres){
+				console.log("hej");
+				htmlChunk += `
+					<label class="checkbox-inline"><input type="checkbox" id="${genre}" value="${genre}">${genre}</label>`;
+			}
+			genresList.innerHTML = htmlChunk;
+
 		},
 
 
@@ -211,54 +323,5 @@ var theLobster = new Movie('The Lobster', 2015,['Comedy', 'Drama', 'Romance', 'S
 theLobster.ratings = [5, 7, 4];
 MovieDatabase.addNewMovie(theLobster);
 
-// Submit
-document.getElementById('addMovieButton').addEventListener("click", addMovie);
-
-// Update
-document.getElementById('updateButton').addEventListener("click", update);
 
 
-
-
-	function addMovie(){
-		var titleInput = document.getElementById('titleInput').value;
-		var yearInput = parseInt(document.getElementById('yearInput').value);
-
-		// Check if input field is empty
-		if(titleInput === ""){
-			alert("Well... a movie needs a title.");
-		}
-		else {
-
-			console.log(titleInput, yearInput);
-			var newMovie = new Movie(titleInput, yearInput, ['Drama', 'Comedy'], [5]);
-			MovieDatabase.addNewMovie(newMovie);
-
-			update();
-		}
-	} 
-
-	// Update/load UI
-	function update(){
-		console.log(MovieDatabase.returnMovies());
-		MovieDatabase.displayMovies();
-		MovieDatabase.listMovies();
-
-		// Rate
-		// var rateMovieButtons = document.getElementsByClassName('rateMovieButton');
-		// for(var i = 0; i < rateMovieButtons.length; i++) { 
-		// 	addEventListener("click", function() {
-		// 		MovieDatabase.rateMovie('Her', 5);
-		// 	});
-		// }
-	} 
-
-
-
-
-
-
-update();
-
-
-MovieDatabase.rateMovie(theLobster, 10);
