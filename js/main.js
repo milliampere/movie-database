@@ -24,6 +24,7 @@ var MovieDatabase  = (function(){
 	    year: 2006,
 	    genres: ['Drama', 'Mystery', 'Sci-Fi'],
 	    ratings: [4, 5, 5, 5], 
+	    description: 'Two stage magicians engage in competitive one-upmanship in an attempt to create the ultimate stage illusion.',
 	    image: "http://www.hidefninja.com/community/attachments/movie-night-clipart-9cp4q9xce-jpeg.279121/"
 		},
 		{
@@ -31,48 +32,59 @@ var MovieDatabase  = (function(){
 	    year: 2013,
 	    genres: ['Drama', 'Romance', 'Sci-Fi'],
 	    ratings: [5, 4, 3, 4], 
+	    description: 'A lonely writer develops an unlikely relationship with an operating system designed to meet his every need.',
 	    image: "http://www.hidefninja.com/community/attachments/movie-night-clipart-9cp4q9xce-jpeg.279121/"
 		},
 		{
 	    title: 'Inception',
 	    year: 2010,
 	    genres: ['Action', 'Adventure', 'Sci-Fi'],
-	    ratings: [3, 4, 5, 4]
+	    ratings: [3, 4, 5, 4],
+	    description: '',
 		},
 		{
 	    title: 'Interstellar',
 	    year: 2014,
 	    genres: ['Adventure', 'Drama', 'Sci-Fi'],
-	    ratings: [3, 4, 3, 2]
+	    ratings: [3, 4, 3, 2],
+	    description: '',
 		},
 	];
 
 	var genres = [
 		'Action',
 		'Adventure',
+		'Comedy',
 		'Drama',
+		'Mystery',
+		'Romance',
 		'Sci-Fi',
+		'Thriller',
 	];
 
+
+	/**
+	 * Class constructor that creates a new movie
+	 * @param {String} title 		Name of movie 
+	 * @param {Number} year 		Release year
+	 * @param {Array} genres 		Genres of movie
+	 */
+	class Movie {
+		constructor(title, year, genres, ratings, description) {
+			this.title = title;
+			this.year = year;
+			this.genres = genres; 
+			this.ratings = ratings;
+			this.description = description;
+		}
+	}
+
 	return {
-
-		// Only for testing
-		returnMovies: () => {
-			return movies;
-		},
-
-
-		// Adds new movie to the array (why is it better to create a new array?)
-		addNewMovie: function(newMovie){
-      var newMoviesArray = movies;
-      newMoviesArray.push(newMovie);
-      movies = newMoviesArray;
-    },
 
     /**
      * Get movies by year
      * @param  {Number}		Year
-     * @return {Array}		Array of all movie released that year  (should return a list)
+     * @return {Array}		Array of all movies released that year  
      */
     getMoviesThisYear: function(year){
     	return movies.filter((movie) => {
@@ -81,17 +93,14 @@ var MovieDatabase  = (function(){
     }, 
 
 		/**
-		 * Get movies by genres 
-		 * @param  {...String}			any number of values	
-		 * @return {Array}
+		 * Get movies by genres
+		 * @param  {Array}  	Array of genres
+		 * @return {Array}    Array of all movies with those genres
 		 */
-    getMoviesByGenre: function(...genres){
+    getMoviesByGenre: function(genres){
 
     	// Create an array of the genre-arguments
-    	var genresArray = [];
-    	for(let genre of genres){
-    		genresArray.push(genre);
-    	}
+    	var genresArray = genres;
 
     	// Check if all values in arr1 is in arr2
     	function containsAll(arr1, arr2){
@@ -104,9 +113,7 @@ var MovieDatabase  = (function(){
     	return movies.filter((movie) => {
     		if (containsAll(genresArray, movie.genres)) {  
  				  return true;
-				} else {
-				   //console.log(false);
-				}
+				} 
 			});
     },
 
@@ -120,11 +127,11 @@ var MovieDatabase  = (function(){
 				return total + rating;
 			}, 0);
 			var numberOfRatings = movie.ratings.length;
-			return sumOfRatings/numberOfRatings;
+			return (sumOfRatings/numberOfRatings).toFixed(1);
 		},
 
     /**
-     * Get the movie with highest ratings
+     * Get the movie with highest rating
      * @return {Object}
      */
     getTopRatedMovie: function(){
@@ -138,6 +145,10 @@ var MovieDatabase  = (function(){
     	});
 		},
 
+		/**
+     * Get the movie with lowest rating
+     * @return {Object}
+     */
 		getWorstRatedMovie: function(){
     	return movies.reduce((prev, curr) => {
     		if(this.getRating(prev) > this.getRating(curr)){
@@ -149,30 +160,88 @@ var MovieDatabase  = (function(){
     	});
 		},
 
-    // Appends albums to main
-		displayMovies: function() {
+		/**
+		 * Rate movie
+		 * @param  {Object}
+		 * @param  {Number}
+		 */
+		rateMovie: function(movie, rating){
+			movie.ratings.push(parseInt(rating));
+		},
+
+		/**
+		 * List all genres with checkboxes
+		 * @param {id} 			Id of the element to append the list to
+		 * @return {HTML}
+		 */
+		listGenresWithCheckboxes: function(element){
+			var element = document.getElementById(element);
+			let htmlChunk = '';
+			for(var genre of genres){
+				htmlChunk += `
+					<label class="checkbox-inline"><input type="checkbox" id="${genre}" value="${genre}">${genre}</label>`;
+			}
+			return element.innerHTML = htmlChunk;
+		},
+
+    /**
+     * [displayMovies description]
+     * @param  {Array} m 		Array of movies
+     * @return {[type]}   [description]
+     */
+		displayMovies: function(m) {
 			var movieList = document.getElementById('movieList');
 			let htmlChunk = '';
 
-			for(var movie of movies){
+			if(m===undefined){
+				m = movies;
+			}
+			else if(m.length === 0){
+				htmlChunk = `<div class="alert alert-danger" role="alert">
+	  			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+	  			<span class="sr-only">Error:</span>
+	  			No movies to display.
+					</div> `;
+			}
+
+			for(var movie of m){
 				var rating = this.getRating(movie);
 				
 				// Space between genres
 				var genreList = '';
 				for(var genre of movie.genres){
-					genreList += (genre + ", ");
+					genreList += `<li class="list-group-item">${genre}</li>`;
 				}
 
 				htmlChunk += `
 					<div class="movie col-sm-3">
 						<div class="panel panel-info">
-							<div class="panel-heading"><h3 class="panel-title"><span class="glyphicon glyphicon-film"></span> ${movie.title}</h3></div>
-							<div class="panel-body"><p>Title: ${movie.title} </p>
-								<p>Year: ${movie.year} </p> 
-								<p>Rating: ${rating} </p>
-								<button type="button" class="btn btn-default rateMovieButton">Rate this movie</button>
+							<div class="panel-heading"><h3 class="panel-title"><span class="glyphicon glyphicon-film"></span> ${movie.title} (${movie.year})</h3></div>
+							<div class="panel-body" data-title="${movie.title}">
+							<p>${movie.description}</p>
+								<p>Rating: ${rating} <span class="glyphicon glyphicon-star"></span></p>
+
+								<select id="ratingSelect" class="ratingSelect form-control" name="rating">
+									<option value="rate">Rate this movie (1-10)</option>
+									<option value="1">1</option>
+									<option value="2">2</option>
+									<option value="3">3</option>
+									<option value="4">4</option>
+									<option value="5">5</option>
+									<option value="6">6</option>
+									<option value="7">7</option>
+									<option value="8">8</option>
+									<option value="9">9</option>
+									<option value="10">10</option>
+					    	</select>
+
+								<h5>Genres</h5>
+					    	<ul class="list-group"> ${genreList} </ul>
+
+					    	<p class="edit"><a href="#">Change this movie</a></p>
+
 							</div>
-							<div class="panel-footer"><p>Genres: ${genreList} <br><a href="#">Lägg till genre</a></p></div>
+							<div class="panel-footer"></div>
 						</div>
 					</div>
 				`;
@@ -181,37 +250,65 @@ var MovieDatabase  = (function(){
 
 		},
 
-		// Appends albums to list
-		// listMovies: function() {
-		// 	var movieList = document.getElementById('list-group');
-		// 	var htmlChunk = '';
-
-		// 	for(var movie of movies){
-		// 		htmlChunk += `
-		// 			<li class="list-group-item"><span class="glyphicon glyphicon-film"></span> ${movie.title}</li>
-		// 		`;
-		// 	}
-		// 	movieList.innerHTML = htmlChunk;
-		// },
-
 		/**
-		 * Rate movie
-		 * @param  {Object}
-		 * @param  {Number}
-		 * @return 
+		 * Get an array of checked genres 
+		 * @param  {HTML}  
+		 * @return {Array}         Array of genres
 		 */
-		rateMovie: function(movie, rating){
-			movie.ratings.push(rating);
-		},
+		getCheckedElements: function(select) {
+		    var result = [];
+		    var checkboxes = select.querySelectorAll("input[type='checkbox']");
+		    for (var i = 0; i < checkboxes.length; i++) {
+		        if (checkboxes[i].checked){
+		        	result.push(checkboxes[i].id);
+		        }    
+		    }
+		    return result;
+		},		
 
+		// Create a select drop down list with years 1990-now
+		fillSelectWithYears: function(select){
+			var htmlChunk = '<option value="all">All</option>';
+			var y = new Date().getFullYear();
+
+			for(let i = 1990; i <= y; i++){
+				htmlChunk += `<option value="${i}">${i}</option>`;
+			}
+			select.innerHTML = htmlChunk;
+		},
 
 		// Load UI
 		loadUI: function(){
 			MovieDatabase.displayMovies();
-			MovieDatabase.showGenres();
-
+			MovieDatabase.listGenresWithCheckboxes('genresSortList');
+			MovieDatabase.listGenresWithCheckboxes('genresAddList');
 			getHighestRating();
 			getLowestRating();
+			MovieDatabase.fillSelectWithYears(document.getElementById('yearSortSelect'));
+			MovieDatabase.fillSelectWithYears(document.getElementById('year'));
+
+
+			yearSortSelect.addEventListener('change', function() {
+				if(this.value === 'all'){
+					MovieDatabase.displayMovies();
+				}
+				else{
+					var moviesThisYear = MovieDatabase.getMoviesThisYear(this.value);
+			 		MovieDatabase.displayMovies(moviesThisYear);
+			 	}
+  					}, false);
+
+
+			var sortByGenresButton = document.getElementById('sortByGenresButton');
+			sortByGenresButton.addEventListener('click', function() {
+				var select = document.getElementById('genresSortList');
+    		var checked = MovieDatabase.getCheckedElements(select);
+				var movies = MovieDatabase.getMoviesByGenre(checked);
+				MovieDatabase.displayMovies(movies);
+				});
+
+
+
 
 			// Highest rating
 			function getHighestRating(){
@@ -231,56 +328,81 @@ var MovieDatabase  = (function(){
 				lowestRatingList.innerHTML = htmlChunk;
 			}
 
-			
-			//MovieDatabase.addIdToInputField();
 
-			//Rate
-			var rateMovieButtons = document.getElementsByClassName('rateMovieButton');
-			for(var i = 0; i < rateMovieButtons.length; i++) { 
-				//console.log(rateMovieButtons[i].parentElement.firstChild.innerHTML);
-				rateMovieButtons[i].addEventListener("click", function() {
-					MovieDatabase.rateMovie(theLobster, 5);
+			var ratingSelect = document.getElementsByClassName('ratingSelect');
+			for(let i = 0; i < ratingSelect.length; i++) { 
+				ratingSelect[i].addEventListener("change", function() {
+					
+					for(var movie of movies){
+						if (movie.title == this.parentElement.dataset.title){
+							MovieDatabase.rateMovie(movie, this.value);
+						}
+					}
+					MovieDatabase.loadUI();
+
 				});
+			}
+
+			var edit = document.getElementsByClassName('edit');
+			var title = document.getElementById('title');
+			var year = document.getElementById('year');
+			//var genresAddList = document.getElementById('genresAddList');
+			//getCheckedElements(genresAddList);	
+
+			for(let i = 0; i < edit.length; i++) { 
+				edit[i].addEventListener("click", function() {
+					for(var movie of movies){
+						if (movie.title == this.parentElement.dataset.title){
+							title.value = movie.title;
+							year.value = movie.year;	
+
+						}
+					}
+
+				});
+			}
+
+		}, 
+
+		/**
+		 * Add new movie to the movie array 
+		 */
+		addMovie: function(){
+			var title = document.getElementById('title').value;
+			var year = parseInt(document.getElementById('year').value);	
+			var description = document.getElementById('description').value;			
+			var select = document.getElementById('genresAddList');
+
+			// Get all checked genres
+    	var genres = MovieDatabase.getCheckedElements(select);
+
+			// Check if input values are valid
+			if(title === ""){
+				alert("Well... movie needs a title.");
+			}
+			else {
+				var newMovie = new Movie(title, year, genres, [], description);
+				// Add to array
+				movies.push(newMovie);
+				// Update displayed list of movies with new movie
+				MovieDatabase.displayMovies();
 			}
 		}, 
 
 		/**
-		 * 
+		 * Edit movie in the movies array 
 		 */
-		addMovie: function(){
+		editMovie: function(movie){
 			var title = document.getElementById('title').value;
 			var year = parseInt(document.getElementById('year').value);
 
-			// Check if input values are valid
-			if(title === ""){
-				alert("Well... a movie needs a title.");
-			}
-			else if(isNaN(year)){
-				alert("Year in numbers pls");
-			}
-			else {
-				var newMovie = new Movie(title, year, ['Drama', 'Comedy'], [5]);
-				MovieDatabase.addNewMovie(newMovie);
-				MovieDatabase.loadUI();
-			}
+			var newMovie = new Movie(title, year, ['Drama', 'Comedy'], [5], 'Description of the movie');
+			MovieDatabase.addMovieToArray(newMovie);
+			MovieDatabase.loadUI();
+			
 		}, 
 
 
-		addIdToMovie: function(){
-			//var movieList = document.getElementsByClassName('movie');
-		},
-
-		showGenres: function(){
-			var genresList = document.getElementById('genresList');
-			let htmlChunk = '';
-			for(var genre of genres){
-				console.log("hej");
-				htmlChunk += `
-					<label class="checkbox-inline"><input type="checkbox" id="${genre}" value="${genre}">${genre}</label>`;
-			}
-			genresList.innerHTML = htmlChunk;
-
-		},
 
 
 
@@ -293,35 +415,17 @@ var MovieDatabase  = (function(){
 
 
 
-/*============================================
-=              Class Constructor             =
-============================================*/
 
-/**
- * Class constructor that creates a new movie
- * @param {String} title 		Name of movie 
- * @param {Number} year 		Release year
- * @param {Array} genres 		Genres of movie
- */
-class Movie {
-	constructor(title, year, genres, ratings) {
-		this.title = title;
-		this.year = year;
-		this.genres = genres; 
-		this.ratings = ratings;
-	}
-	getMovie() {
-		return `(${this.title}, ${this.year}, ${this.genres})`;
-	}
-}
+
+
 
 /**
  * Object created with the Class constructor. 
  * @type {Movie}
  */
-var theLobster = new Movie('The Lobster', 2015,['Comedy', 'Drama', 'Romance', 'Sci-Fi']);
-theLobster.ratings = [5, 7, 4];
-MovieDatabase.addNewMovie(theLobster);
+// var theLobster = new Movie('The Lobster', 2015,['Comedy', 'Drama', 'Romance', 'Sci-Fi']);
+// theLobster.ratings = [5, 7, 4];
+// MovieDatabase.addMovieToArray(theLobster);
 
 
 
