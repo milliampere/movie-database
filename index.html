@@ -17,10 +17,6 @@ html, body {
 	margin: 1rem;
 }
 
-.thumbnail {
-	max-width: 100px;
-}
-
 .label {
 	margin: 1px;
 }
@@ -31,26 +27,49 @@ html, body {
 
 		<div class="col-sm-4">
 			<div class="panel panel-default">
-			  <div class="panel-heading"><h3 class="panel-title">Sort by...</h3></div>
+			  <div class="panel-heading"><h3 class="panel-title">Filter<button type="button" class="btn btn-link btn-sm" id="resetButton">(Reset)</button></h3></div>
 			  <div class="panel-body">
 					<label for="genresSortList">Sort by genre</label>
 				  <div id="genresSortList" class="checkbox">
 				  </div>	
-					<button type="button" class="btn btn-default" id="sortByGenresButton">Sort</button>
-					<button type="button" class="btn btn-default" id="resetButton">Reset</button>	<br>
-
-				  <label for="yearSortSelect">Sort by release year</label>
+					<button type="button" class="btn btn-default btn-sm" id="sortByGenresButton">Sort</button>
+					<br>
+				  <label for="yearSortSelect">..or sort by release year</label>
 				  <select id="yearSortSelect" class="form-control" name="year">
-			    </select>
-
-				  			
-
+					</select>
+					<h5>..or sort by rating</h5>
+					<label for="fromRatingSortSelect">From</label>
+					<select id="fromRatingSortSelect" class="custom-select mb-2 mr-sm-2 mb-sm-0"" name="fromRatingSortSelect">
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+						<option value="6">6</option>
+						<option value="7">7</option>
+						<option value="8">8</option>
+						<option value="9">9</option>
+						<option value="10">10</option>
+					</select>
+					<label for="toRatingSortSelect">To</label>
+					<select id="toRatingSortSelect" class="custom-select mb-2 mr-sm-2 mb-sm-0"" name="toRatingSortSelect">
+						<option value="10">10</option>
+						<option value="9">9</option>
+						<option value="8">8</option>
+						<option value="7">7</option>
+						<option value="6">6</option>
+						<option value="5">5</option>
+						<option value="4">4</option>
+						<option value="3">3</option>
+						<option value="2">2</option>
+						<option value="1">1</option>
+					</select>
+					<button type="button" class="btn btn-default btn-sm" id="sortByRatingsButton">Sort</button>
 			  </div>
-
 			</div>
 		</div>
 
-		<div class="col-sm-4">
+		<div class="col-sm-3">
 			<div class="panel panel-default">
 				<div class="panel-heading"><h3 class="panel-title">Ratings</h3></div>	
 				<div class="panel-body">
@@ -63,8 +82,7 @@ html, body {
 			</div>
 		</div>
 
-
-		<div class="col-sm-4">
+		<div class="col-sm-5">
 			<div class="panel panel-default">
 			<div class="panel-heading"><h3 class="panel-title">Add or edit movie</h3></div>
 				<div class="panel-body">
@@ -84,7 +102,8 @@ html, body {
 					    <label for="description">Description</label>
 					    <textarea rows="2" cols="50" class="form-control" id="description"></textarea>
 					  </div>
-					  <button type="button" class="btn btn-default" id="addMovieButton">Go</button>
+					  <button type="button" class="btn btn-default btn-sm" id="addMovieButton">Add</button>
+					  <button type="button" class="btn btn-default btn-sm" id="editMovieButton">Update</button>
 					</form>
 				</div>
 		</div>
