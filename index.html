@@ -14,11 +14,15 @@
 
 html, body {
 	font-family: 16px/1.5 "Verdana";
-	margin: 2rem;
+	margin: 1rem;
 }
 
 .thumbnail {
 	max-width: 100px;
+}
+
+.label {
+	margin: 1px;
 }
 
 </style>
@@ -29,17 +33,17 @@ html, body {
 			<div class="panel panel-default">
 			  <div class="panel-heading"><h3 class="panel-title">Sort by...</h3></div>
 			  <div class="panel-body">
-			    <p>Sort by genre</p>
+					<label for="genresSortList">Sort by genre</label>
+				  <div id="genresSortList" class="checkbox">
+				  </div>	
+					<button type="button" class="btn btn-default" id="sortByGenresButton">Sort</button>
+					<button type="button" class="btn btn-default" id="resetButton">Reset</button>	<br>
 
-					  <div id="genresSortList" class="checkbox">
-					  </div>	
-						<button type="button" class="btn btn-default" id="sortByGenresButton">Sort</button><br>
+				  <label for="yearSortSelect">Sort by release year</label>
+				  <select id="yearSortSelect" class="form-control" name="year">
+			    </select>
 
-					  <label for="yearSortSelect">Release year</label>
-					  <select id="yearSortSelect" class="form-control" name="year">
-				    </select>
-
-					  <button type="button" class="btn btn-default" id="updateButton">Update</button>				
+				  			
 
 			  </div>
 
@@ -62,7 +66,7 @@ html, body {
 
 		<div class="col-sm-4">
 			<div class="panel panel-default">
-			<div class="panel-heading"><h3 class="panel-title">Add movie</h3></div>
+			<div class="panel-heading"><h3 class="panel-title">Add or edit movie</h3></div>
 				<div class="panel-body">
 					<form>
 					  <div class="form-group">
@@ -70,15 +74,15 @@ html, body {
 					    <input type="text" class="form-control" id="title" placeholder="Title">
 					  </div>
 					  <div class="form-group">
-					    <label for="year">Release year</label>
-					  <select id="year" class="form-control" name="year">
+					    <label class="mr-sm-2" for="year">Release year</label>
+					  <select id="year" class="custom-select mb-2 mr-sm-2 mb-sm-0" name="year">
 				    </select>
+					  </div>
+					  <div id="genresAddList" class="checkbox">
 					  </div>
 					  <div class="form-group">
 					    <label for="description">Description</label>
-					    <textarea rows="4" cols="50" class="form-control" id="description"></textarea>
-					  </div>
-					  <div id="genresAddList" class="checkbox">
+					    <textarea rows="2" cols="50" class="form-control" id="description"></textarea>
 					  </div>
 					  <button type="button" class="btn btn-default" id="addMovieButton">Go</button>
 					</form>
@@ -97,7 +101,6 @@ html, body {
 	  <span class="sr-only">Error:</span>
 	  Enter a valid email address
 	</div> -->
-
 
 
 
