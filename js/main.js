@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 });
 
 /**
- * The Movie Database (revealing module pattern)
+ * The Movie Database (module pattern)
  * @return {Object}
  */
 const MovieDatabase  = (function(){
