@@ -1,5 +1,5 @@
 /**
- * Eventlistener to apply click-functions and load content at init
+ * Eventlistener to apply click-functions and load content at init ...
  */
 document.addEventListener('DOMContentLoaded', function(event) {
 	document.getElementById('addMovieButton').addEventListener('click', MovieDatabase.addMovie);
