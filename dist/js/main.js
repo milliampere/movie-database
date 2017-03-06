@@ -6,7 +6,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Eventlistener to apply click-functions and load content at init ...
  */
 document.addEventListener('DOMContentLoaded', function (event) {
-	document.getElementById('addMovieButton').addEventListener('click', MovieDatabase.addMovie);
+	document.getElementById('addMovieButton').addEventListener('click', function () {
+		MovieDatabase.addMovie();
+		$("#addMovie").modal("hide");
+	});
 	document.getElementById('editMovieButton').addEventListener('click', MovieDatabase.editMovie);
 	document.getElementById('sortByGenresButton').addEventListener('click', MovieDatabase.sortByGenre);
 	document.getElementById('resetButton').addEventListener('click', function () {
