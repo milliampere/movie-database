@@ -39,7 +39,7 @@ const MovieDatabase  = (function(){
 	    genres: ['Drama', 'Mystery', 'Sci-Fi'],
 	    ratings: [4, 8, 7, 10], 
 	    description: 'Two stage magicians engage in competitive one-upmanship in an attempt to create the ultimate stage illusion.',
-	    image: "http://www.hidefninja.com/community/attachments/movie-night-clipart-9cp4q9xce-jpeg.279121/"
+	    image: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMjA4NDI0MTIxNF5BMl5BanBnXkFtZTYwNTM0MzY2._V1_SX300.jpg'
 		},
 		{
 	    title: 'Her',
@@ -47,7 +47,7 @@ const MovieDatabase  = (function(){
 	    genres: ['Drama', 'Romance', 'Sci-Fi'],
 	    ratings: [5, 7, 3, 4], 
 	    description: 'A lonely writer develops an unlikely relationship with an operating system designed to meet his every need.',
-	    image: "http://www.hidefninja.com/community/attachments/movie-night-clipart-9cp4q9xce-jpeg.279121/"
+	    image: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMjA1Nzk0OTM2OF5BMl5BanBnXkFtZTgwNjU2NjEwMDE@._V1_SX300.jpg'
 		},
 		{
 	    title: 'Interstellar',
@@ -55,6 +55,7 @@ const MovieDatabase  = (function(){
 	    genres: ['Adventure', 'Drama', 'Sci-Fi'],
 	    ratings: [3, 4, 2],
 	    description: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
+	    image: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMjIxNTU4MzY4MF5BMl5BanBnXkFtZTgwMzM4ODI3MjE@._V1_SX300.jpg'
 		},
 		{
 	    title: 'Inception',
@@ -62,6 +63,7 @@ const MovieDatabase  = (function(){
 	    genres: ['Action', 'Adventure', 'Sci-Fi'],
 	    ratings: [3, 4, 5, 6],
 	    description: 'A thief, who steals corporate secrets through use of dream-sharing technology, is given the inverse task of planting an idea into the mind of a CEO.',
+			image: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg'
 		},
 		{
 	    title: 'Shutter Island',
@@ -69,6 +71,7 @@ const MovieDatabase  = (function(){
 	    genres: ['Mystery', 'Thriller'],
 	    ratings: [7, 6, 8],
 	    description: 'In 1954, a U.S. marshal investigates the disappearance of a murderess who escaped from a hospital for the criminally insane.',
+			image: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMTMxMTIyNzMxMV5BMl5BanBnXkFtZTcwOTc4OTI3Mg@@._V1_SX300.jpg'
 		},
 		{
 	    title: 'Logan: The Wolverine',
@@ -76,6 +79,7 @@ const MovieDatabase  = (function(){
 	    genres: ['Action', 'Drama', 'Sci-Fi'],
 	    ratings: [6, 6, 8],
 	    description: 'In the near future, a weary Logan cares for an ailing Professor X in a hide out on the Mexican border. A young mutant arrives, being pursued by dark forces.',
+			image: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMjI1MjkzMjczMV5BMl5BanBnXkFtZTgwNDk4NjYyMTI@._V1_SX300.jpg'
 		},
 	];
 
@@ -99,12 +103,13 @@ const MovieDatabase  = (function(){
 	 * @param {String} description 	Movie description
 	 */
 	class Movie {
-		constructor(title, year, genres, ratings, description) {
+		constructor(title, year, genres, ratings, description, image) {
 			this.title = title;
 			this.year = year;
 			this.genres = genres; 
 			this.ratings = ratings;
 			this.description = description;
+			this.image = image;
 		}
 	}
 
@@ -295,19 +300,40 @@ const MovieDatabase  = (function(){
 					
 					let genreList = '';
 					for(let genre of movie.genres){
-						genreList += `<span class="label label-primary">${genre}</span>`;
+						genreList += `<span class="label label-default">${genre}</span>`;
 					}
 
-					htmlChunk += `<div class="movie col-sm-3" data-title="${movie.title}">
-													<div class="panel panel-info">
+					
+					
+					// Popover (Bootstrap)
+					$(document).ready(function(){
+					    $('[data-toggle="popover"]').popover({
+					    	trigger: 'focus',
+					    	placement: 'auto right',
+					    	html: true,
+					    	delay: { "show": 0, "hide": 300 }
+					    }); 
+					});
+
+					var popoverTitle = `${movie.title} (${movie.year})
+															<a href='#'><span class='glyphicon glyphicon-pencil'></span></a>`;
+					var popoverContent = `${movie.description} 
+																<a href='#'><span class='glyphicon glyphicon-pencil'></span></a>`;
+
+					$(function() {
+    $('.movie').matchHeight();
+});
+
+					htmlChunk += `<div class="movie col-xs-6 col-sm-4 col-md-3" data-title="${movie.title}">
+													<div class="panel panel-default">
 														<div class="panel-heading">
 															<h3 class="panel-title">
-															<span class="glyphicon glyphicon-film"></span> ${movie.title} (${movie.year})
+															 ${movie.title} <span class="badge">${rating}</span>
 															</h3>
 														</div>
 														<div class="panel-body">
-															<p>${movie.description}</p>
-															Rating: ${rating} <span class="glyphicon glyphicon-star"></span>
+															<img src="${movie.image}" class="img-fluid poster" alt="${movie.title}" tabindex="0" data-toggle="popover" data-title="${popoverTitle}" data-content="${popoverContent}">
+							
 															<select id="ratingSelect" class="ratingSelect custom-select mb-2 mr-sm-2 mb-sm-0">
 																<option value="10">10</option>
 																<option value="9">9</option>
@@ -321,8 +347,9 @@ const MovieDatabase  = (function(){
 																<option value="1">1</option>
 												    	</select>
 												    	<button type="button" class="btn btn-secondary btn-sm rateButton">Rate</button>
-						    							<ul class="list-group"> ${genreList} </ul>
-						    							<p class="edit"><a href="#">Edit this movie</a></p>
+
+															<ul class="list-group">${genreList}</ul>
+
 														</div>
 													</div>
 												</div>`;
@@ -436,7 +463,7 @@ const MovieDatabase  = (function(){
 				alert("Pick a year.");
 			}
 			else {
-				const newMovie = new Movie(title.value, year.value, genres, [], description.value);
+				const newMovie = new Movie(title.value, year.value, genres, [], description.value, 'http://images.clipartpanda.com/movie-border-clipart-movie_title_border.png');
 				movies.push(newMovie);
 				MovieDatabase.appendMovies([movies[movies.length-1]]); 	//Load the new movie list
 				MovieDatabase.resetInputs();
@@ -483,10 +510,38 @@ const MovieDatabase  = (function(){
 			}	
 		},
 
+		appendCounter: function(){
+			var totalMovies = movies.length;
+			console.log(totalMovies);
+		},
 
 	// end of return
 	};
 
 // end of MovieDatabase
 })();
+
+MovieDatabase.appendCounter();
+
+// $(document).ready(function(){
+//     $(".edit").click(function(){
+//     	$(this).parents('.movie').find('.panel-title').css( "background-color", "red" );
+//     	console.log('hej');
+//         //$("#test").hide();
+//     });
+// });
+
+// $(document).ready(function(){
+// 	$(".poster").hover(function(){
+// 	    $("#test").hide();
+// 	    console.log($(this));
+// 	    }, function(){
+// 	    $(this).css("background-color", "pink");
+// 	});
+// });
+// 
+// 
+// 
+
+
 

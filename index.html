@@ -7,58 +7,151 @@
 	<title>Movie Database</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	<link rel="stylesheet" href="dist/css/main.min.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.matchHeight/0.7.0/jquery.matchHeight-min.js"></script>
 </head>
 <body>
 
+<!-- <main class="row">
+	<div class="flex flex-row flex-wrap">
+		<div class="box panel panel-default">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">hej</h3>
+				</div>
+				<div class="panel-body">
+				<img src="https://images-na.ssl-images-amazon.com/images/M/MV5BMjA1Nzk0OTM2OF5BMl5BanBnXkFtZTgwNjU2NjEwMDE@._V1_SX300.jpg" class="poster">
+				</div>
+			</div>
+		</div>
+		<div class="box panel panel-default">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">hej</h3>
+				</div>
+				<div class="panel-body">
+				<img src="https://images-na.ssl-images-amazon.com/images/M/MV5BMjIxNTU4MzY4MF5BMl5BanBnXkFtZTgwMzM4ODI3MjE@._V1_SX300.jpg" class="poster">
+				</div>
+			</div>
+		</div>
+		<div class="box panel panel-default">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">hej</h3>
+				</div>
+				<div class="panel-body">
+				<img src="https://images-na.ssl-images-amazon.com/images/M/MV5BMjA1Nzk0OTM2OF5BMl5BanBnXkFtZTgwNjU2NjEwMDE@._V1_SX300.jpg" class="poster">
+				</div>
+			</div>
+		</div>
+		<div class="box panel panel-default">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">hej</h3>
+				</div>
+				<div class="panel-body">
+				<img src="https://images-na.ssl-images-amazon.com/images/M/MV5BMjA1Nzk0OTM2OF5BMl5BanBnXkFtZTgwNjU2NjEwMDE@._V1_SX300.jpg" class="poster">
+				</div>
+			</div>
+		</div>
+		<div class="box panel panel-default">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">hej</h3>
+				</div>
+				<div class="panel-body">
+				<img src="https://images-na.ssl-images-amazon.com/images/M/MV5BMjA1Nzk0OTM2OF5BMl5BanBnXkFtZTgwNjU2NjEwMDE@._V1_SX300.jpg" class="poster">
+				</div>
+			</div>
+		</div>
+		<div class="box panel panel-default">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">hej</h3>
+				</div>
+				<div class="panel-body">
+				<img src="https://images-na.ssl-images-amazon.com/images/M/MV5BMjA1Nzk0OTM2OF5BMl5BanBnXkFtZTgwNjU2NjEwMDE@._V1_SX300.jpg" class="poster">
+				</div>
+			</div>
+		</div>
+		<div class="box">hej</div>
+		<div class="box">hej</div>
+		<div class="box">hej</div>
+		<div class="box">hej</div>
+		<div class="box">hej</div>
+		<div class="box">hej</div>
+		<div class="box">hej</div>
+		<div class="box">hej</div>
+		<div class="box">hej</div>
+		<div class="box">hej</div>
+	</div>
+</main>
+ -->
+
 	<main class="row">
 
-		<div class="col-sm-4">
+		<div class="col-sm-8">
 			<div class="panel panel-default">
-			  <div class="panel-heading"><h3 class="panel-title">Filter<button type="button" class="btn btn-link btn-sm" id="resetButton">(Reset)</button></h3></div>
+	<!-- 		  <div class="panel-heading"><h3>Movie Database<button type="button" class="btn btn-link btn-sm" id="resetButton">(Reset)</button></h3></div> -->
 			  <div class="panel-body">
-					<label for="genresSortList">Sort by genre</label>
-				  <div id="genresSortList" class="checkbox">
-				  </div>	
-					<button type="button" class="btn btn-default btn-sm" id="sortByGenresButton">Sort</button>
-					<br>
-				  <label for="yearSortSelect">..or sort by release year</label>
-				  <select id="yearSortSelect" class="form-control" name="year">
-					</select>
-					<h5>..or sort by rating</h5>
-					<label for="fromRatingSortSelect">From</label>
-					<select id="fromRatingSortSelect" class="custom-select mb-2 mr-sm-2 mb-sm-0"" name="fromRatingSortSelect">
-						<option value="1">1</option>
-						<option value="2">2</option>
-						<option value="3">3</option>
-						<option value="4">4</option>
-						<option value="5">5</option>
-						<option value="6">6</option>
-						<option value="7">7</option>
-						<option value="8">8</option>
-						<option value="9">9</option>
-						<option value="10">10</option>
-					</select>
-					<label for="toRatingSortSelect">To</label>
-					<select id="toRatingSortSelect" class="custom-select mb-2 mr-sm-2 mb-sm-0"" name="toRatingSortSelect">
-						<option value="10">10</option>
-						<option value="9">9</option>
-						<option value="8">8</option>
-						<option value="7">7</option>
-						<option value="6">6</option>
-						<option value="5">5</option>
-						<option value="4">4</option>
-						<option value="3">3</option>
-						<option value="2">2</option>
-						<option value="1">1</option>
-					</select>
-					<button type="button" class="btn btn-default btn-sm" id="sortByRatingsButton">Sort</button>
+
+					<ul class="nav nav-tabs">
+					  <li class="active"><a data-toggle="tab" href="#menu1">Filter by genre</a></li>
+					  <li><a data-toggle="tab" href="#menu2">Filter by release year</a></li>
+					  <li><a data-toggle="tab" href="#menu3">Filter by ratings</a></li>
+					</ul>
+
+					<div class="tab-content">
+					  <div id="menu1" class="tab-pane fade in active">
+					    <h4>Filter by genre</h4>
+							<div id="genresSortList" class="checkbox">
+							</div>	
+							<button type="button" class="btn btn-default btn-sm" id="sortByGenresButton">Sort</button>
+							<button type="button" class="btn btn-link btn-sm" id="resetButton">(Reset)</button>
+					  </div>
+					  <div id="menu2" class="tab-pane fade">
+					    <h4>Filter by release year</h4>
+						  <select id="yearSortSelect" class="form-control" name="year">
+							</select>
+					  </div>
+					  <div id="menu3" class="tab-pane fade">
+					    <h4>Filter by rating</h4>
+								<label for="fromRatingSortSelect">From</label>
+								<select id="fromRatingSortSelect" class="custom-select mb-2 mr-sm-2 mb-sm-0"" name="fromRatingSortSelect">
+									<option value="1">1</option>
+									<option value="2">2</option>
+									<option value="3">3</option>
+									<option value="4">4</option>
+									<option value="5">5</option>
+									<option value="6">6</option>
+									<option value="7">7</option>
+									<option value="8">8</option>
+									<option value="9">9</option>
+									<option value="10">10</option>
+								</select>
+								<label for="toRatingSortSelect">To</label>
+								<select id="toRatingSortSelect" class="custom-select mb-2 mr-sm-2 mb-sm-0"" name="toRatingSortSelect">
+									<option value="10">10</option>
+									<option value="9">9</option>
+									<option value="8">8</option>
+									<option value="7">7</option>
+									<option value="6">6</option>
+									<option value="5">5</option>
+									<option value="4">4</option>
+									<option value="3">3</option>
+									<option value="2">2</option>
+									<option value="1">1</option>
+								</select>
+								<button type="button" class="btn btn-default btn-sm" id="sortByRatingsButton">Sort</button>
+  					</div>
+					</div>
 			  </div>
 			</div>
 		</div>
 
-		<div class="col-sm-3">
+		<div class="col-sm-4">
 			<div class="panel panel-default">
 				<div class="panel-heading"><h3 class="panel-title">Ratings</h3></div>	
 				<div class="panel-body">
@@ -66,27 +159,18 @@
 					<div id="highestRatingList"></div>
 					<h5>Lowest rating</h5>
 					<div id="lowestRatingList"></div>
-				</div>	
-				<!-- <a href="#" class="thumbnail"><img src="http://www.hidefninja.com/community/attachments/movie-night-clipart-9cp4q9xce-jpeg.279121/" alt="movie"></a> -->
-			</div>
-		</div>
 
-		<div class="col-sm-5">
-			<div class="panel panel-default">
-			<div class="panel-heading"><h3 class="panel-title">Add or edit movie</h3></div>
-				<div class="panel-body">
-					
 					<!-- Trigger the modal with a button -->
 	  			<button type="button" class="btn btn-info" data-toggle="modal" data-target="#addMovie">Add movie</button>
 
-
-				</div>
+				</div>	
+			</div>
 		</div>
 
 	</main>
 
-	<main class="row">
-		<div id="movieList"></div>
+	<main>
+		<div id="movieList" class="row"></div>
 	</main>
 
 

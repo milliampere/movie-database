@@ -1,12 +1,62 @@
 html, body {
 	font-family: 16px/1.5 "Verdana";
-	margin: 1rem;
+	margin: 0.8rem;
 	background-color: #c0c0c0;
 }
 
 .label {
 	margin: 1px;
 }
+
+.poster {
+	/*max-width: 100%;*/
+}
+
+.movie {
+/*	max-height: 500px;
+	min-height: 500px;*/
+	/*height: 30vw;*/
+}
+
+.box{
+	/*height: 50vh;
+	min-height: 350px;
+	backg*/round-color: teal;
+}
+
+.flex {
+	/*display: flex;*/
+}
+
+.flex-row {
+	/*flex-direction: row;*/
+}
+
+.flex-wrap {
+	flex-wrap: wrap;
+}
+
+.flex-justify-content {
+	justify-content: space-around;
+}
+
+
+.equal {
+  display: inline-flex;
+}
+
+div[class*='col-'] {
+  flex:1 1 auto;
+  display: inline-flex;
+}
+.panel {
+  flex:1 0 100%;
+}
+
+
+
+
+
 
 
 /* The Modal (background) */
