@@ -37,17 +37,19 @@ const MovieDatabase  = (function(){
 	    title: 'The Prestige',
 	    year: 2006,
 	    genres: ['Drama', 'Mystery', 'Sci-Fi'],
-	    ratings: [4, 8, 7, 10], 
+	    ratings: [2, 3, 4, 5], 
 	    description: 'Two stage magicians engage in competitive one-upmanship in an attempt to create the ultimate stage illusion.',
-	    image: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMjA4NDI0MTIxNF5BMl5BanBnXkFtZTYwNTM0MzY2._V1_SX300.jpg'
+	    image: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMjA4NDI0MTIxNF5BMl5BanBnXkFtZTYwNTM0MzY2._V1_SX300.jpg',
+			id: 0,
 		},
 		{
 	    title: 'Her',
 	    year: 2013,
 	    genres: ['Drama', 'Romance', 'Sci-Fi'],
-	    ratings: [5, 7, 3, 4], 
+	    ratings: [5, 3], 
 	    description: 'A lonely writer develops an unlikely relationship with an operating system designed to meet his every need.',
-	    image: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMjA1Nzk0OTM2OF5BMl5BanBnXkFtZTgwNjU2NjEwMDE@._V1_SX300.jpg'
+	    image: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMjA1Nzk0OTM2OF5BMl5BanBnXkFtZTgwNjU2NjEwMDE@._V1_SX300.jpg',
+			id: 1,
 		},
 		{
 	    title: 'Interstellar',
@@ -55,31 +57,32 @@ const MovieDatabase  = (function(){
 	    genres: ['Adventure', 'Drama', 'Sci-Fi'],
 	    ratings: [3, 4, 2],
 	    description: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
-	    image: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMjIxNTU4MzY4MF5BMl5BanBnXkFtZTgwMzM4ODI3MjE@._V1_SX300.jpg'
+	    image: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMjIxNTU4MzY4MF5BMl5BanBnXkFtZTgwMzM4ODI3MjE@._V1_SX300.jpg',
+			id: 2,
 		},
 		{
 	    title: 'Inception',
 	    year: 2010,
 	    genres: ['Action', 'Adventure', 'Sci-Fi'],
-	    ratings: [3, 4, 5, 6],
+	    ratings: [3, 4, 5, 1],
 	    description: 'A thief, who steals corporate secrets through use of dream-sharing technology, is given the inverse task of planting an idea into the mind of a CEO.',
-			image: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg'
+			image: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg',
 		},
 		{
 	    title: 'Shutter Island',
 	    year: 2010,
 	    genres: ['Mystery', 'Thriller'],
-	    ratings: [7, 6, 8],
+	    ratings: [5, 2, 3],
 	    description: 'In 1954, a U.S. marshal investigates the disappearance of a murderess who escaped from a hospital for the criminally insane.',
-			image: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMTMxMTIyNzMxMV5BMl5BanBnXkFtZTcwOTc4OTI3Mg@@._V1_SX300.jpg'
+			image: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMTMxMTIyNzMxMV5BMl5BanBnXkFtZTcwOTc4OTI3Mg@@._V1_SX300.jpg',
 		},
 		{
 	    title: 'Logan: The Wolverine',
 	    year: 2017,
 	    genres: ['Action', 'Drama', 'Sci-Fi'],
-	    ratings: [6, 6, 8],
+	    ratings: [2, 2, 3],
 	    description: 'In the near future, a weary Logan cares for an ailing Professor X in a hide out on the Mexican border. A young mutant arrives, being pursued by dark forces.',
-			image: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMjI1MjkzMjczMV5BMl5BanBnXkFtZTgwNDk4NjYyMTI@._V1_SX300.jpg'
+			image: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMjI1MjkzMjczMV5BMl5BanBnXkFtZTgwNDk4NjYyMTI@._V1_SX300.jpg',
 		},
 	];
 
@@ -112,6 +115,8 @@ const MovieDatabase  = (function(){
 			this.image = image;
 		}
 	}
+
+
 
 	return {
     /**
@@ -294,17 +299,77 @@ const MovieDatabase  = (function(){
 					movieList.innerHTML = htmlChunk;
 			}
 			
+
+
 				for(let movie of moviesArray){
 					
 					let rating = this.getRating(movie);
+
+					let id = 'movie'+moviesArray.indexOf(movie);
 					
 					let genreList = '';
 					for(let genre of movie.genres){
-						genreList += `<span class="label label-default">${genre}</span>`;
+						genreList += `<h6 class="genre-badge"><span class="badge badge-default">${genre}</span></h6>`;
 					}
 
-					
-					
+
+					let ratingHtml = `
+														<select id="${id}" class="ratingSelect" name="rating" data-current-rating="${rating}" autocomplete="off">
+														  <option value="1">1</option>
+														  <option value="2">2</option>
+														  <option value="3">3</option>
+														  <option value="4">4</option>
+														  <option value="5">5</option>
+														</select>
+
+						                <span class="title current-rating">
+						                  Current rating: <span class="value">${rating}</span>
+						                </span>
+						                <span class="title your-rating hidden">
+						                  Your rating: <span class="value"></span>&nbsp;
+						                  <a href="#" class="clear-rating"><i class="fa fa-times-circle"></i></a>
+						                </span>
+
+														`;
+
+
+
+					$(document).ready(function(){
+						var currentRating = $('#'+id).data('current-rating');
+					   $(function() {
+					      $('#'+id).barrating({
+					        theme: 'css-stars',
+					        initialRating: currentRating,
+					        showSelectedRating: false,
+					        onSelect:function(value, text, event){
+
+					        	var that = '#'+id;
+
+					        	// Funkar
+					        	$(that).parent().css( "background-color", "red" );
+
+					        	MovieDatabase.rateMovie(movie, value);
+					        	
+					        	//$('that.parent() .current-rating')
+                    //    .addClass('hidden');
+
+                    $(that).parent('.my-movie').find('.current-rating').addClass('hidden');
+
+                    $('.my-movie .your-rating')
+                        .removeClass('hidden')
+                        .find('span')
+                        .html(value);
+
+					        	//that.find('.current-rating').addClass('hidden');
+					        	//$('#'+id).css('background-color', 'yellow');
+					        	//$(('#'+id)' .current-rating').addClass('hidden');
+					        } 
+					      });
+					   });
+					});				
+
+
+
 					// Popover (Bootstrap)
 					$(document).ready(function(){
 					    $('[data-toggle="popover"]').popover({
@@ -320,20 +385,21 @@ const MovieDatabase  = (function(){
 					var popoverContent = `${movie.description} 
 																<a href='#'><span class='glyphicon glyphicon-pencil'></span></a>`;
 
-					$(function() {
-    $('.movie').matchHeight();
-});
+// 					$(function() {
+//     $('.movie').matchHeight();
+// });
 
 					htmlChunk += `<div class="movie col-xs-6 col-sm-4 col-md-3" data-title="${movie.title}">
 													<div class="panel panel-default">
 														<div class="panel-heading">
-															<h3 class="panel-title">
-															 ${movie.title} <span class="badge">${rating}</span>
-															</h3>
+															<h4>${movie.title}<span class="badge badge-default pull-xs-right">${rating}</span>
+															</h4>				
 														</div>
-														<div class="panel-body">
+														<div class="panel-body my-movie">
 															<img src="${movie.image}" class="img-fluid poster" alt="${movie.title}" tabindex="0" data-toggle="popover" data-title="${popoverTitle}" data-content="${popoverContent}">
-							
+
+															${ratingHtml}
+
 															<select id="ratingSelect" class="ratingSelect custom-select mb-2 mr-sm-2 mb-sm-0">
 																<option value="10">10</option>
 																<option value="9">9</option>
@@ -348,14 +414,15 @@ const MovieDatabase  = (function(){
 												    	</select>
 												    	<button type="button" class="btn btn-secondary btn-sm rateButton">Rate</button>
 
-															<ul class="list-group">${genreList}</ul>
-
+															<small class="text-muted">Last updated 3 mins ago</small>
+															
+															${genreList}
 														</div>
 													</div>
 												</div>`;
 				}
 				movieList.innerHTML = htmlChunk;
-				MovieDatabase.addClickEventsToMovies();
+				//MovieDatabase.addClickEventsToMovies();
 		},
 
 		/**
@@ -515,6 +582,37 @@ const MovieDatabase  = (function(){
 			console.log(totalMovies);
 		},
 
+		appendStarRating: function(){
+			var myStars = document.getElementById('mystars');
+
+			var thisMovieRating = MovieDatabase.getRating(MovieDatabase.movies[0]);
+    	console.log(thisMovieRating);
+
+			var htmlChunk = `<div class="stars stars-example-fontawesome-o">
+										    <select id="example-fontawesome-o" name="rating" data-current-rating="5.6" autocomplete="off">
+										      <option value=""></option>
+										      <option value="1">1</option>
+										      <option value="2">2</option>
+										      <option value="3">3</option>
+										      <option value="4">4</option>
+										      <option value="5">5</option>
+										      <option value="6">6</option>
+										      <option value="7">7</option>
+										      <option value="8">8</option>
+										      <option value="9">9</option>
+										      <option value="10">10</option>
+										    </select>
+										    <span class="title current-rating">
+										      Current rating: <span class="value"></span>
+										    </span>
+										    <span class="title your-rating hidden">
+										      Your rating: <span class="value"></span>&nbsp;
+										      <a href="#" class="clear-rating"><i class="fa fa-times-circle"></i></a>
+										    </span>
+										  </div>`;
+		myStars.innerHTML = htmlChunk;
+		},
+
 	// end of return
 	};
 
@@ -522,26 +620,114 @@ const MovieDatabase  = (function(){
 })();
 
 MovieDatabase.appendCounter();
-
-// $(document).ready(function(){
-//     $(".edit").click(function(){
-//     	$(this).parents('.movie').find('.panel-title').css( "background-color", "red" );
-//     	console.log('hej');
-//         //$("#test").hide();
-//     });
-// });
-
-// $(document).ready(function(){
-// 	$(".poster").hover(function(){
-// 	    $("#test").hide();
-// 	    console.log($(this));
-// 	    }, function(){
-// 	    $(this).css("background-color", "pink");
-// 	});
-// });
-// 
-// 
-// 
+//MovieDatabase.appendStarRating();
 
 
 
+
+$(document).ready(function(){
+   $(function() {
+      $('#example').barrating({
+        theme: 'css-stars',
+        initialRating: 4,
+        showSelectedRating: false, 
+
+      });
+   });
+
+
+
+$(function() {
+    function ratingEnable() {
+    
+    		var currentRating = $('#example-fontawesome-o').data('current-rating');
+
+        $('#example-fontawesome').barrating({
+            theme: 'fontawesome-stars',
+            showSelectedRating: false
+        });
+
+        $('.example-css').barrating({
+            theme: 'css-stars',
+            initialRating: currentRating,
+            showSelectedRating: false
+        });
+
+        $('#example-bootstrap').barrating({
+            theme: 'bootstrap-stars',
+            showSelectedRating: false
+        });
+
+        $('.stars-example-fontawesome-o .current-rating')
+            .find('span')
+            .html(currentRating);
+
+        $('.stars-example-fontawesome-o .clear-rating').on('click', function(event) {
+            event.preventDefault();
+
+            $('#example-fontawesome-o')
+                .barrating('clear');
+        });
+
+        $('#example-fontawesome-o').barrating({
+            theme: 'fontawesome-stars-o',
+            showSelectedRating: false,
+            initialRating: currentRating,
+            onSelect: function(value, text) {
+                if (!value) {
+                    $('#example-fontawesome-o')
+                        .barrating('clear');
+                } else {
+                    $('.stars-example-fontawesome-o .current-rating')
+                        .addClass('hidden');
+
+                    $('.stars-example-fontawesome-o .your-rating')
+                        .removeClass('hidden')
+                        .find('span')
+                        .html(value);
+                }
+            },
+            onClear: function(value, text) {
+                $('.stars-example-fontawesome-o')
+                    .find('.current-rating')
+                    .removeClass('hidden')
+                    .end()
+                    .find('.your-rating')
+                    .addClass('hidden');
+            }
+        });
+    }
+
+    // For testing (users without JS)
+    function ratingDisable() {
+        $('select').barrating('destroy');
+    }
+
+    $('.rating-enable').click(function(event) {
+        event.preventDefault();
+
+        ratingEnable();
+
+        $(this).addClass('deactivated');
+        $('.rating-disable').removeClass('deactivated');
+    });
+
+    $('.rating-disable').click(function(event) {
+        event.preventDefault();
+
+        ratingDisable();
+
+        $(this).addClass('deactivated');
+        $('.rating-enable').removeClass('deactivated');
+    });
+
+    ratingEnable();
+});
+
+
+});
+
+
+
+
+    	

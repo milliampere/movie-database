@@ -3,220 +3,243 @@
 <head>
 	<meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<title>Movie Database</title>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-	<link rel="stylesheet" href="dist/css/main.min.css">
+
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
 	<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.matchHeight/0.7.0/jquery.matchHeight-min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
+	<!-- jQuery Bar Rating -->
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+	<link rel="stylesheet" href="node_modules/jquery-bar-rating/dist/themes/css-stars.css" />
+	<link rel="stylesheet" href="node_modules/jquery-bar-rating/dist/themes/fontawesome-stars-o.css" />
+	<link rel="stylesheet" href="node_modules/jquery-bar-rating/dist/themes/fontawesome-stars.css" />
+	<link rel="stylesheet" href="node_modules/jquery-bar-rating/examples/css/examples.css" />
+
+	<!-- Custom style -->
+	<link rel="stylesheet" href="dist/css/main.min.css">
+
+  <!-- MatchHeight -->
+  <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.matchHeight/0.7.0/jquery.matchHeight-min.js"></script> -->
 </head>
 <body>
 
-<!-- <main class="row">
-	<div class="flex flex-row flex-wrap">
-		<div class="box panel panel-default">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">hej</h3>
-				</div>
-				<div class="panel-body">
-				<img src="https://images-na.ssl-images-amazon.com/images/M/MV5BMjA1Nzk0OTM2OF5BMl5BanBnXkFtZTgwNjU2NjEwMDE@._V1_SX300.jpg" class="poster">
-				</div>
-			</div>
-		</div>
-		<div class="box panel panel-default">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">hej</h3>
-				</div>
-				<div class="panel-body">
-				<img src="https://images-na.ssl-images-amazon.com/images/M/MV5BMjIxNTU4MzY4MF5BMl5BanBnXkFtZTgwMzM4ODI3MjE@._V1_SX300.jpg" class="poster">
-				</div>
-			</div>
-		</div>
-		<div class="box panel panel-default">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">hej</h3>
-				</div>
-				<div class="panel-body">
-				<img src="https://images-na.ssl-images-amazon.com/images/M/MV5BMjA1Nzk0OTM2OF5BMl5BanBnXkFtZTgwNjU2NjEwMDE@._V1_SX300.jpg" class="poster">
-				</div>
-			</div>
-		</div>
-		<div class="box panel panel-default">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">hej</h3>
-				</div>
-				<div class="panel-body">
-				<img src="https://images-na.ssl-images-amazon.com/images/M/MV5BMjA1Nzk0OTM2OF5BMl5BanBnXkFtZTgwNjU2NjEwMDE@._V1_SX300.jpg" class="poster">
-				</div>
-			</div>
-		</div>
-		<div class="box panel panel-default">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">hej</h3>
-				</div>
-				<div class="panel-body">
-				<img src="https://images-na.ssl-images-amazon.com/images/M/MV5BMjA1Nzk0OTM2OF5BMl5BanBnXkFtZTgwNjU2NjEwMDE@._V1_SX300.jpg" class="poster">
-				</div>
-			</div>
-		</div>
-		<div class="box panel panel-default">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">hej</h3>
-				</div>
-				<div class="panel-body">
-				<img src="https://images-na.ssl-images-amazon.com/images/M/MV5BMjA1Nzk0OTM2OF5BMl5BanBnXkFtZTgwNjU2NjEwMDE@._V1_SX300.jpg" class="poster">
-				</div>
-			</div>
-		</div>
-		<div class="box">hej</div>
-		<div class="box">hej</div>
-		<div class="box">hej</div>
-		<div class="box">hej</div>
-		<div class="box">hej</div>
-		<div class="box">hej</div>
-		<div class="box">hej</div>
-		<div class="box">hej</div>
-		<div class="box">hej</div>
-		<div class="box">hej</div>
-	</div>
-</main>
- -->
+<div id="mystars"></div>
 
-	<main class="row">
 
-		<div class="col-sm-8">
-			<div class="panel panel-default">
-	<!-- 		  <div class="panel-heading"><h3>Movie Database<button type="button" class="btn btn-link btn-sm" id="resetButton">(Reset)</button></h3></div> -->
-			  <div class="panel-body">
+<select id="example" name="rating" data-current-rating="3" autocomplete="off">
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+  <option value="5">5</option>
+</select>
 
-					<ul class="nav nav-tabs">
-					  <li class="active"><a data-toggle="tab" href="#menu1">Filter by genre</a></li>
-					  <li><a data-toggle="tab" href="#menu2">Filter by release year</a></li>
-					  <li><a data-toggle="tab" href="#menu3">Filter by ratings</a></li>
-					</ul>
-
-					<div class="tab-content">
-					  <div id="menu1" class="tab-pane fade in active">
-					    <h4>Filter by genre</h4>
-							<div id="genresSortList" class="checkbox">
-							</div>	
-							<button type="button" class="btn btn-default btn-sm" id="sortByGenresButton">Sort</button>
-							<button type="button" class="btn btn-link btn-sm" id="resetButton">(Reset)</button>
-					  </div>
-					  <div id="menu2" class="tab-pane fade">
-					    <h4>Filter by release year</h4>
-						  <select id="yearSortSelect" class="form-control" name="year">
-							</select>
-					  </div>
-					  <div id="menu3" class="tab-pane fade">
-					    <h4>Filter by rating</h4>
-								<label for="fromRatingSortSelect">From</label>
-								<select id="fromRatingSortSelect" class="custom-select mb-2 mr-sm-2 mb-sm-0"" name="fromRatingSortSelect">
-									<option value="1">1</option>
-									<option value="2">2</option>
-									<option value="3">3</option>
-									<option value="4">4</option>
-									<option value="5">5</option>
-									<option value="6">6</option>
-									<option value="7">7</option>
-									<option value="8">8</option>
-									<option value="9">9</option>
-									<option value="10">10</option>
-								</select>
-								<label for="toRatingSortSelect">To</label>
-								<select id="toRatingSortSelect" class="custom-select mb-2 mr-sm-2 mb-sm-0"" name="toRatingSortSelect">
-									<option value="10">10</option>
-									<option value="9">9</option>
-									<option value="8">8</option>
-									<option value="7">7</option>
-									<option value="6">6</option>
-									<option value="5">5</option>
-									<option value="4">4</option>
-									<option value="3">3</option>
-									<option value="2">2</option>
-									<option value="1">1</option>
-								</select>
-								<button type="button" class="btn btn-default btn-sm" id="sortByRatingsButton">Sort</button>
-  					</div>
-					</div>
-			  </div>
-			</div>
-		</div>
-
-		<div class="col-sm-4">
-			<div class="panel panel-default">
-				<div class="panel-heading"><h3 class="panel-title">Ratings</h3></div>	
-				<div class="panel-body">
-					<h5>Highest rating</h5>
-					<div id="highestRatingList"></div>
-					<h5>Lowest rating</h5>
-					<div id="lowestRatingList"></div>
-
-					<!-- Trigger the modal with a button -->
-	  			<button type="button" class="btn btn-info" data-toggle="modal" data-target="#addMovie">Add movie</button>
-
-				</div>	
-			</div>
-		</div>
-
-	</main>
-
-	<main>
-		<div id="movieList" class="row"></div>
-	</main>
+<select class="example-css">
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+  <option value="5">5</option>
+</select>
 
 
 
 
 
-	  <!-- Modal -->
-	  <div class="modal fade" id="addMovie" role="dialog">
-	    <div class="modal-dialog">
-	      <div class="modal-content">
-	        <div class="modal-header">
-	          <button type="button" class="close" data-dismiss="modal">&times;</button>
-	          <h4 class="modal-title">Add or edit movie</h4>
+<header>
+	<nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+	  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+	    <span class="navbar-toggler-icon"></span>
+	  </button>
+	  <a class="navbar-brand" href="#">Movie Database</a>
+	  <div class="collapse navbar-collapse" id="navbarNavDropdown">
+	    <ul class="navbar-nav mr-auto">
+
+	    	<!-- Home -->
+	      <li class="nav-item active">
+	        <a class="nav-link" data-toggle="tab" href="#home">Home <span class="sr-only">(current)</span></a>
+	      </li>
+
+	      <!-- Filter dropdown -->
+	      <li class="nav-item dropdown">
+	        <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	          Filter
+	        </a>
+	        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+	          <a class="dropdown-item" data-toggle="tab" href="#filter1">by genre</a>
+	          <a class="dropdown-item" data-toggle="tab" href="#filter2">by release year</a>
+	          <a class="dropdown-item" data-toggle="tab" href="#filter3">by rating</a>
 	        </div>
-	        <div class="modal-body">
-	          
-						<form>
-						  <div class="form-group">
-						    <label for="title">Movie title</label>
-						    <input type="text" class="form-control" id="title" placeholder="Title">
-						  </div>
-						  <div class="form-group">
-						    <label class="mr-sm-2" for="year">Release year</label>
-						  <select id="year" class="custom-select mb-2 mr-sm-2 mb-sm-0" name="year">
-					    </select>
-						  </div>
-						  <div id="genresAddList" class="checkbox">
-						  </div>
-						  <div class="form-group">
-						    <label for="description">Description</label>
-						    <textarea rows="2" cols="50" class="form-control" id="description"></textarea>
-						  </div>
+	      </li>
+	      <li class="nav-item">
+	        <a class="nav-link" data-toggle="tab" href="#ratings">Ratings</a>
+	      </li>
 
-						</form>
+	    </ul>
 
-	        </div>
-	        <div class="modal-footer">
-	        	<button type="button" class="btn btn-default" id="addMovieButton">Add</button>
-						<button type="button" class="btn btn-default" id="editMovieButton">Update</button>
-	          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-	        </div>
-	      </div>
-	    </div>
+			<!-- Add new movie button -->
+	    <form class="form-inline pull-xs-right">
+	    	<button class="btn btn-sm align-middle btn-info" type="button" data-toggle="modal" data-target="#addMovie">Add new movie</button>
+	  	</form>
+
+	  </div>
+	</nav>
+
+
+	<!-- Tab content -->
+	<div class="tab-content p-3">
+
+	  <div class="tab-pane active" id="home" role="tabpanel">
+    	<h4>Hej</h4>
+    	<p>This is my <mark>movie database</mark>.</p>
+    	<small>This line of text is meant to be treated as fine print.</small>
+		</div>
+
+	  <div class="tab-pane" id="filter1" role="tabpanel">
+	    <h4>Filter by genre</h4>
+			<div id="genresSortList" class="checkbox">
+			</div>	
+			<button type="button" class="btn btn-default btn-sm" id="sortByGenresButton">Sort</button>
+			<button type="button" class="btn btn-link btn-sm" id="resetButton">(Reset)</button>
 	  </div>
 
+	  <div class="tab-pane" id="filter2" role="tabpanel">
+	    <h4>Filter by release year</h4>
+		  <select id="yearSortSelect" class="form-control" name="year">
+			</select>
+	  </div>
+
+	  <div class="tab-pane" id="filter3" role="tabpanel">
+	    <h4>Filter by rating</h4>
+				<label for="fromRatingSortSelect">From</label>
+				<select id="fromRatingSortSelect" class="custom-select mb-2 mr-sm-2 mb-sm-0"" name="fromRatingSortSelect">
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+					<option value="4">4</option>
+					<option value="5">5</option>
+					<option value="6">6</option>
+					<option value="7">7</option>
+					<option value="8">8</option>
+					<option value="9">9</option>
+					<option value="10">10</option>
+				</select>
+				<label for="toRatingSortSelect">To</label>
+				<select id="toRatingSortSelect" class="custom-select mb-2 mr-sm-2 mb-sm-0"" name="toRatingSortSelect">
+					<option value="10">10</option>
+					<option value="9">9</option>
+					<option value="8">8</option>
+					<option value="7">7</option>
+					<option value="6">6</option>
+					<option value="5">5</option>
+					<option value="4">4</option>
+					<option value="3">3</option>
+					<option value="2">2</option>
+					<option value="1">1</option>
+				</select>
+				<button type="button" class="btn btn-default btn-sm" id="sortByRatingsButton">Sort</button>
+		</div>
+
+			  <div class="tab-pane" id="ratings" role="tabpanel">
+			    	Highest rating:  <div id="highestRatingList"></div>
+						Lowest rating: <div id="lowestRatingList"></div>
+		  	</div>
+
+	</div>
+
+</header>
+
+<main>
+	<div id="movieList" class="row"></div>
+</main>
+
+
+<!-- Modal for add -->
+<div class="modal fade" id="addMovie" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Add new movie</h4>
+      </div>
+      <div class="modal-body">
+        
+				<form>
+				  <div class="form-group">
+				    <label for="title">Movie title</label>
+				    <input type="text" class="form-control" id="title" placeholder="">
+				  </div>
+				  <div class="form-group">
+				    <label class="mr-sm-2" for="year">Release year</label>
+				  <select id="year" class="custom-select mb-2 mr-sm-2 mb-sm-0" name="year">
+			    </select>
+				  </div>
+				  <div id="genresAddList" class="checkbox">
+				  </div>
+				  <div class="form-group">
+				    <label for="description">Description</label>
+				    <textarea rows="2" cols="50" class="form-control" id="description"></textarea>
+				  </div>
+
+				</form>
+
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-default" id="addMovieButton">Add</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- Modal for edit -->
+<div class="modal fade" id="editMovie" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Add new movie</h4>
+      </div>
+      <div class="modal-body">
+        
+				<form>
+				  <div class="form-group">
+				    <label for="title">Movie title</label>
+				    <input type="text" class="form-control" id="title" placeholder="">
+				  </div>
+				  <div class="form-group">
+				    <label class="mr-sm-2" for="year">Release year</label>
+				  <select id="year" class="custom-select mb-2 mr-sm-2 mb-sm-0" name="year">
+			    </select>
+				  </div>
+				  <div id="genresAddList" class="checkbox">
+				  </div>
+				  <div class="form-group">
+				    <label for="description">Description</label>
+				    <textarea rows="2" cols="50" class="form-control" id="description"></textarea>
+				  </div>
+
+				</form>
+
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-default" id="editMovieButton">Update</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 	<script src="dist/js/main.js"></script>
+	<script src="node_modules/jquery-bar-rating/dist/jquery.barrating.min.js"></script>
+
 </body>
 </html>

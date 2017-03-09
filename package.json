@@ -19,5 +19,8 @@
     "gulp-postcss": "^6.3.0",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^3.1.0"
+  },
+  "dependencies": {
+    "jquery-bar-rating": "^1.2.2"
   }
 }

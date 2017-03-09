@@ -1,7 +1,7 @@
 html, body {
 	font-family: 16px/1.5 "Verdana";
 	margin: 0.8rem;
-	background-color: #c0c0c0;
+	background-color: #FFF;
 }
 
 .label {
@@ -12,6 +12,17 @@ html, body {
 	/*max-width: 100%;*/
 }
 
+.genre-badge {
+	display: inline;
+	margin-left: 3px;
+}
+
+.hidden {
+  display: none !important;
+  visibility: hidden;
+}
+
+
 .movie {
 /*	max-height: 500px;
 	min-height: 500px;*/
@@ -21,7 +32,7 @@ html, body {
 .box{
 	/*height: 50vh;
 	min-height: 350px;
-	backg*/round-color: teal;
+	background-color: teal;*/
 }
 
 .flex {
@@ -33,24 +44,24 @@ html, body {
 }
 
 .flex-wrap {
-	flex-wrap: wrap;
+	/*flex-wrap: wrap;*/
 }
 
 .flex-justify-content {
-	justify-content: space-around;
+	/*justify-content: space-around;*/
 }
 
 
 .equal {
-  display: inline-flex;
+  /*display: inline-flex;*/
 }
 
 div[class*='col-'] {
-  flex:1 1 auto;
-  display: inline-flex;
+  /*flex:1 1 auto;*/
+  /*display: inline-flex;*/
 }
 .panel {
-  flex:1 0 100%;
+  /*flex:1 0 100%;*/
 }
 
 
