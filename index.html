@@ -27,29 +27,6 @@
 </head>
 <body>
 
-<div id="mystars"></div>
-
-
-<select id="example" name="rating" data-current-rating="3" autocomplete="off">
-  <option value="1">1</option>
-  <option value="2">2</option>
-  <option value="3">3</option>
-  <option value="4">4</option>
-  <option value="5">5</option>
-</select>
-
-<select class="example-css">
-  <option value="1">1</option>
-  <option value="2">2</option>
-  <option value="3">3</option>
-  <option value="4">4</option>
-  <option value="5">5</option>
-</select>
-
-
-
-
-
 <header>
 	<nav class="navbar navbar-toggleable-md navbar-light bg-faded">
 	  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -103,8 +80,8 @@
 	    <h4>Filter by genre</h4>
 			<div id="genresSortList" class="checkbox">
 			</div>	
-			<button type="button" class="btn btn-default btn-sm" id="sortByGenresButton">Sort</button>
-			<button type="button" class="btn btn-link btn-sm" id="resetButton">(Reset)</button>
+			<button type="button" class="btn btn-sm align-middle btn-info" id="sortByGenresButton">Filter</button>
+			<button type="button" class="btn btn-sm align-middle btn-info" id="resetButton">Reset</button>
 	  </div>
 
 	  <div class="tab-pane" id="filter2" role="tabpanel">
@@ -122,31 +99,21 @@
 					<option value="3">3</option>
 					<option value="4">4</option>
 					<option value="5">5</option>
-					<option value="6">6</option>
-					<option value="7">7</option>
-					<option value="8">8</option>
-					<option value="9">9</option>
-					<option value="10">10</option>
 				</select>
 				<label for="toRatingSortSelect">To</label>
 				<select id="toRatingSortSelect" class="custom-select mb-2 mr-sm-2 mb-sm-0"" name="toRatingSortSelect">
-					<option value="10">10</option>
-					<option value="9">9</option>
-					<option value="8">8</option>
-					<option value="7">7</option>
-					<option value="6">6</option>
 					<option value="5">5</option>
 					<option value="4">4</option>
 					<option value="3">3</option>
 					<option value="2">2</option>
 					<option value="1">1</option>
 				</select>
-				<button type="button" class="btn btn-default btn-sm" id="sortByRatingsButton">Sort</button>
+				<button type="button" class="btn btn-sm align-middle btn-info" id="sortByRatingsButton">Filter</button>
 		</div>
 
 			  <div class="tab-pane" id="ratings" role="tabpanel">
-			    	Highest rating:  <div id="highestRatingList"></div>
-						Lowest rating: <div id="lowestRatingList"></div>
+			    	<div id="highestRatingList"></div>
+						<div id="lowestRatingList"></div>
 		  	</div>
 
 	</div>

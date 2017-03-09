@@ -10,25 +10,28 @@ document.addEventListener('DOMContentLoaded', function (event) {
 		MovieDatabase.addMovie();
 		$("#addMovie").modal("hide");
 	});
-	document.getElementById('editMovieButton').addEventListener('click', MovieDatabase.editMovie);
-	document.getElementById('sortByGenresButton').addEventListener('click', MovieDatabase.sortByGenre);
+
+	// Filter button events
+	document.getElementById('sortByGenresButton').addEventListener('click', AppendToHtml.sortByGenre);
+	document.getElementById('yearSortSelect').addEventListener('change', AppendToHtml.sortByYear);
+	document.getElementById('sortByRatingsButton').addEventListener('click', AppendToHtml.sortByRatings);
+
 	document.getElementById('resetButton').addEventListener('click', function () {
 		MovieDatabase.appendMovies();
 	});
-	document.getElementById('yearSortSelect').addEventListener('change', MovieDatabase.sortByYear);
-	document.getElementById('sortByRatingsButton').addEventListener('click', MovieDatabase.sortByRatings);
+	document.getElementById('editMovieButton').addEventListener('click', MovieDatabase.editMovie);
 
-	MovieDatabase.appendGenresList('genresSortList');
-	MovieDatabase.appendGenresList('genresAddList');
-	MovieDatabase.fillSelectWithYears(document.getElementById('yearSortSelect'));
-	MovieDatabase.fillSelectWithYears(document.getElementById('year'));
+	AppendToHtml.appendGenresList();
+	AppendToHtml.appendTopLists();
 
-	MovieDatabase.appendTopLists();
+	AppendToHtml.fillSelectWithYears(document.getElementById('yearSortSelect'));
+	AppendToHtml.fillSelectWithYears(document.getElementById('year'));
+
 	MovieDatabase.appendMovies(); //Fill index with movies
 });
 
 /**
- * The Movie Database (module pattern)
+ * The Movie Database (revealing module pattern)
  * @return {Object}
  */
 var MovieDatabase = function () {
@@ -106,660 +109,624 @@ var MovieDatabase = function () {
 		this.image = image;
 	};
 
-	return {
-		/**
-   * Get movies by year
-   * @param  {Number}	year	The chosen year
-   * @return {Array}				Array of all movies released that year  
-   */
-		getMoviesThisYear: function getMoviesThisYear(year) {
-			return movies.filter(function (movie) {
-				return movie.year == year;
-			});
-		},
+	/**
+  * Get movies by year
+  * @param  {Number}	year	The chosen year
+  * @return {Array}				Array of all movies released that year  
+  */
 
-		/**
-   *  Get movies with ratings between two numbers
-   * @param  {Number} to   
-   * @param  {Number} from 
-   * @return {Array}    				Array of movies with specific ratings  
-   */
-		getMoviesThisRatings: function getMoviesThisRatings(from, to) {
-			return movies.filter(function (movie) {
-				return MovieDatabase.getRating(movie) > from && MovieDatabase.getRating(movie) <= to;
-			});
-		},
 
-		/**
-   * Get movies by movie genres
-   * @param  {Array} genres  	Array of chosen movie genres
-   * @return {Array}    			Array of all movies with those genres
-   */
-		getMoviesByGenre: function getMoviesByGenre(genres) {
-			// Check if all values in arr1 is in arr2
-			function containsAll(arr1, arr2) {
-				return arr1.every(function (v, i) {
-					return arr2.indexOf(v) !== -1;
-				});
+	function getMoviesThisYear(year) {
+		return movies.filter(function (movie) {
+			return movie.year == year;
+		});
+	}
+
+	/**
+  *  Get movies with ratings between two numbers
+  * @param  {Number} to   
+  * @param  {Number} from 
+  * @return {Array}    				Array of movies with specific ratings  
+  */
+	function getMoviesThisRatings(from, to) {
+		return movies.filter(function (movie) {
+			return MovieDatabase.getRating(movie) > from && MovieDatabase.getRating(movie) <= to;
+		});
+	}
+
+	/**
+  * Get movies by movie genres
+  * @param  {Array} genres  	Array of chosen movie genres
+  * @return {Array}    			Array of all movies with those genres
+  */
+	function getMoviesByGenre(genres) {
+		// Check if all values in arr1 is in arr2
+		function containsAll(arr1, arr2) {
+			return arr1.every(function (v, i) {
+				return arr2.indexOf(v) !== -1;
+			});
+		}
+
+		return movies.filter(function (movie) {
+			return containsAll(genres, movie.genres);
+		});
+	}
+
+	/**
+  * Calculate the average rating value of a movie
+  * @param  {Object}	movie		A movie object
+  * @return {Number}					The average rating  
+  */
+	function getRating(movie) {
+		if (movie.ratings.length === 0) {
+			return '-';
+		}
+		var sumOfRatings = movie.ratings.reduce(function (total, rating) {
+			return total + rating;
+		}, 0);
+		var numberOfRatings = movie.ratings.length;
+		return (sumOfRatings / numberOfRatings).toFixed(1);
+	}
+
+	/**
+  * Get the movie with highest rating
+  * @return {Object}		Single movie object
+  */
+	function getTopRatedMovie() {
+		var _this = this;
+
+		return movies.reduce(function (prev, curr) {
+			if (parseInt(_this.getRating(prev)) < parseInt(_this.getRating(curr))) {
+				return curr;
+			} else {
+				return prev;
 			}
+		});
+	}
 
-			return movies.filter(function (movie) {
-				return containsAll(genres, movie.genres);
-			});
-		},
-
-		/**
-   * Calculate the average rating value of a movie
-   * @param  {Object}	movie		A movie object
-   * @return {Number}					The average rating  
-   */
-		getRating: function getRating(movie) {
-			if (movie.ratings.length === 0) {
-				return '-';
-			}
-			var sumOfRatings = movie.ratings.reduce(function (total, rating) {
-				return total + rating;
-			}, 0);
-			var numberOfRatings = movie.ratings.length;
-			return (sumOfRatings / numberOfRatings).toFixed(1);
-		},
-
-		/**
-   * Get the movie with highest rating
+	/**
+   * Get the movie with lowest rating
    * @return {Object}		Single movie object
    */
-		getTopRatedMovie: function getTopRatedMovie() {
-			var _this = this;
+	function getWorstRatedMovie() {
+		var _this2 = this;
 
-			return movies.reduce(function (prev, curr) {
-				if (parseInt(_this.getRating(prev)) < parseInt(_this.getRating(curr))) {
-					return curr;
-				} else {
-					return prev;
-				}
-			});
-		},
-
-		/**
-     * Get the movie with lowest rating
-     * @return {Object}		Single movie object
-     */
-		getWorstRatedMovie: function getWorstRatedMovie() {
-			var _this2 = this;
-
-			return movies.reduce(function (prev, curr) {
-				if (parseInt(_this2.getRating(prev)) > parseInt(_this2.getRating(curr))) {
-					return curr;
-				} else {
-					return prev;
-				}
-			});
-		},
-
-		/**
-   * Rate movie by adding it to its ratings array
-   * @param  {Object}	movie		Movie object
-   * @param  {Number}	rating	Rating to add
-   */
-		rateMovie: function rateMovie(movie, rating) {
-			movie.ratings.push(parseInt(rating));
-		},
-
-		/**
-   * Create a list of all genres with checkboxes in index.html
-   * @param {String} id 			Id of the element to append the list to
-   */
-		appendGenresList: function appendGenresList(id) {
-			var element = document.getElementById(id);
-			var htmlChunk = '';
-			var _iteratorNormalCompletion = true;
-			var _didIteratorError = false;
-			var _iteratorError = undefined;
-
-			try {
-				for (var _iterator = genres[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-					var genre = _step.value;
-
-					htmlChunk += '\n\t\t\t\t\t<label class="checkbox-inline"><input type="checkbox" id="' + genre + '" value="' + genre + '">' + genre + '</label>';
-				}
-			} catch (err) {
-				_didIteratorError = true;
-				_iteratorError = err;
-			} finally {
-				try {
-					if (!_iteratorNormalCompletion && _iterator.return) {
-						_iterator.return();
-					}
-				} finally {
-					if (_didIteratorError) {
-						throw _iteratorError;
-					}
-				}
+		return movies.reduce(function (prev, curr) {
+			if (parseInt(_this2.getRating(prev)) > parseInt(_this2.getRating(curr))) {
+				return curr;
+			} else {
+				return prev;
 			}
+		});
+	}
 
-			element.innerHTML = htmlChunk;
-		},
+	/**
+  * Rate movie by adding it to its ratings array
+  * @param  {Object}	movie		Movie object
+  * @param  {Number}	rating	Rating to add
+  */
+	function rateMovie(movie, rating) {
+		movie.ratings.push(parseInt(rating));
+	}
 
-		/**
-   * Add click events to movie list
-   * (This is very messy code)
-   */
-		addClickEventsToMovies: function addClickEventsToMovies() {
-			var title = document.getElementById('title');
-			var year = document.getElementById('year');
-			var description = document.getElementById('description');
-			var genresAddList = document.getElementById('genresAddList');
+	/**
+  * Add click events to movie list
+  * (This is very messy code)
+  */
+	function addClickEventsToMovies() {
+		var title = document.getElementById('title');
+		var year = document.getElementById('year');
+		var description = document.getElementById('description');
+		var genresAddList = document.getElementById('genresAddList');
 
-			var appendedMovies = document.getElementsByClassName('movie');
-			var rateButton = document.getElementsByClassName('rateButton');
-			var edit = document.getElementsByClassName('edit');
+		var appendedMovies = document.getElementsByClassName('movie');
+		var rateButton = document.getElementsByClassName('rateButton');
+		var edit = document.getElementsByClassName('edit');
 
-			for (var i = 0; i < appendedMovies.length; i++) {
-				rateButton[i].addEventListener('click', function (e) {
-					var _iteratorNormalCompletion2 = true;
-					var _didIteratorError2 = false;
-					var _iteratorError2 = undefined;
+		for (var i = 0; i < appendedMovies.length; i++) {
+			rateButton[i].addEventListener('click', function (e) {
+				var _iteratorNormalCompletion = true;
+				var _didIteratorError = false;
+				var _iteratorError = undefined;
 
-					try {
-						for (var _iterator2 = movies[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-							var movie = _step2.value;
+				try {
+					for (var _iterator = movies[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+						var movie = _step.value;
 
-							var _datasetTitle = e.target.parentElement.parentElement.parentElement.dataset.title;
-							if (movie.title == _datasetTitle) {
-								var pickedRating = parseInt(e.target.previousSibling.previousSibling.value);
-								MovieDatabase.rateMovie(movie, pickedRating); // Add rating to movie array
-								MovieDatabase.appendMovies([movie]); // Load movie with new rating
-								MovieDatabase.appendTopLists(); // Load top list 
-							}
-						}
-					} catch (err) {
-						_didIteratorError2 = true;
-						_iteratorError2 = err;
-					} finally {
-						try {
-							if (!_iteratorNormalCompletion2 && _iterator2.return) {
-								_iterator2.return();
-							}
-						} finally {
-							if (_didIteratorError2) {
-								throw _iteratorError2;
-							}
+						var _datasetTitle = e.target.parentElement.parentElement.parentElement.dataset.title;
+						if (movie.title == _datasetTitle) {
+							var pickedRating = parseInt(e.target.previousSibling.previousSibling.value);
+							MovieDatabase.rateMovie(movie, pickedRating); // Add rating to movie array
+							MovieDatabase.appendMovies([movie]); // Load movie with new rating
 						}
 					}
-				});
-				edit[i].addEventListener("click", function (e) {
-					datasetTitle = e.target.parentElement.parentElement.parentElement.parentElement.dataset.title;
-					var _iteratorNormalCompletion3 = true;
-					var _didIteratorError3 = false;
-					var _iteratorError3 = undefined;
-
+				} catch (err) {
+					_didIteratorError = true;
+					_iteratorError = err;
+				} finally {
 					try {
-						for (var _iterator3 = movies[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-							var movie = _step3.value;
+						if (!_iteratorNormalCompletion && _iterator.return) {
+							_iterator.return();
+						}
+					} finally {
+						if (_didIteratorError) {
+							throw _iteratorError;
+						}
+					}
+				}
+			});
+			edit[i].addEventListener("click", function (e) {
+				datasetTitle = e.target.parentElement.parentElement.parentElement.parentElement.dataset.title;
+				var _iteratorNormalCompletion2 = true;
+				var _didIteratorError2 = false;
+				var _iteratorError2 = undefined;
 
-							if (movie.title == datasetTitle) {
-								title.value = movie.title;
-								year.value = movie.year;
-								description.value = movie.description;
+				try {
+					for (var _iterator2 = movies[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+						var movie = _step2.value;
 
-								var allInput = genresAddList.querySelectorAll('input');
+						if (movie.title == datasetTitle) {
+							title.value = movie.title;
+							year.value = movie.year;
+							description.value = movie.description;
 
-								for (var j = 0; j < allInput.length; j++) {
-									var _iteratorNormalCompletion4 = true;
-									var _didIteratorError4 = false;
-									var _iteratorError4 = undefined;
+							var allInput = genresAddList.querySelectorAll('input');
 
-									try {
-										for (var _iterator4 = movie.genres[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-											var genre = _step4.value;
+							for (var j = 0; j < allInput.length; j++) {
+								var _iteratorNormalCompletion3 = true;
+								var _didIteratorError3 = false;
+								var _iteratorError3 = undefined;
 
-											if (allInput[j].id == genre) {
-												allInput[j].checked = true;
-											}
+								try {
+									for (var _iterator3 = movie.genres[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+										var genre = _step3.value;
+
+										if (allInput[j].id == genre) {
+											allInput[j].checked = true;
 										}
-									} catch (err) {
-										_didIteratorError4 = true;
-										_iteratorError4 = err;
+									}
+								} catch (err) {
+									_didIteratorError3 = true;
+									_iteratorError3 = err;
+								} finally {
+									try {
+										if (!_iteratorNormalCompletion3 && _iterator3.return) {
+											_iterator3.return();
+										}
 									} finally {
-										try {
-											if (!_iteratorNormalCompletion4 && _iterator4.return) {
-												_iterator4.return();
-											}
-										} finally {
-											if (_didIteratorError4) {
-												throw _iteratorError4;
-											}
+										if (_didIteratorError3) {
+											throw _iteratorError3;
 										}
 									}
 								}
 							}
 						}
-					} catch (err) {
-						_didIteratorError3 = true;
-						_iteratorError3 = err;
-					} finally {
-						try {
-							if (!_iteratorNormalCompletion3 && _iterator3.return) {
-								_iterator3.return();
-							}
-						} finally {
-							if (_didIteratorError3) {
-								throw _iteratorError3;
-							}
-						}
-					}
-				});
-			}
-		},
-
-		/**
-   * Append movies to index.html
-   * @param  {Array} moviesArray 		Array of movie objects
-   */
-		appendMovies: function appendMovies(moviesArray) {
-			var _this3 = this;
-
-			var movieList = document.getElementById('movieList');
-			var htmlChunk = '';
-
-			if (moviesArray === undefined) {
-				moviesArray = movies;
-			} else if (moviesArray.length === 0) {
-				htmlChunk = '<div class="alert alert-danger" role="alert">\n\t  \t\t\t<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>\n\t  \t\t\t<span class="sr-only">Error:</span>\n\t  \t\t\tNo movies to display.\n\t\t\t\t\t</div> ';
-				movieList.innerHTML = htmlChunk;
-			}
-
-			var _iteratorNormalCompletion5 = true;
-			var _didIteratorError5 = false;
-			var _iteratorError5 = undefined;
-
-			try {
-				var _loop = function _loop() {
-					var movie = _step5.value;
-
-
-					var rating = _this3.getRating(movie);
-
-					var id = 'movie' + moviesArray.indexOf(movie);
-
-					var genreList = '';
-					var _iteratorNormalCompletion6 = true;
-					var _didIteratorError6 = false;
-					var _iteratorError6 = undefined;
-
-					try {
-						for (var _iterator6 = movie.genres[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-							var genre = _step6.value;
-
-							genreList += '<h6 class="genre-badge"><span class="badge badge-default">' + genre + '</span></h6>';
-						}
-					} catch (err) {
-						_didIteratorError6 = true;
-						_iteratorError6 = err;
-					} finally {
-						try {
-							if (!_iteratorNormalCompletion6 && _iterator6.return) {
-								_iterator6.return();
-							}
-						} finally {
-							if (_didIteratorError6) {
-								throw _iteratorError6;
-							}
-						}
-					}
-
-					var ratingHtml = '\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<select id="' + id + '" class="ratingSelect" name="rating" data-current-rating="' + rating + '" autocomplete="off">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t  <option value="1">1</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t  <option value="2">2</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t  <option value="3">3</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t  <option value="4">4</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t  <option value="5">5</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</select>\n\n\t\t\t\t\t\t                <span class="title current-rating">\n\t\t\t\t\t\t                  Current rating: <span class="value">' + rating + '</span>\n\t\t\t\t\t\t                </span>\n\t\t\t\t\t\t                <span class="title your-rating hidden">\n\t\t\t\t\t\t                  Your rating: <span class="value"></span>&nbsp;\n\t\t\t\t\t\t                  <a href="#" class="clear-rating"><i class="fa fa-times-circle"></i></a>\n\t\t\t\t\t\t                </span>\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t';
-
-					$(document).ready(function () {
-						var currentRating = $('#' + id).data('current-rating');
-						$(function () {
-							$('#' + id).barrating({
-								theme: 'css-stars',
-								initialRating: currentRating,
-								showSelectedRating: false,
-								onSelect: function onSelect(value, text, event) {
-
-									var that = '#' + id;
-
-									// Funkar
-									$(that).parent().css("background-color", "red");
-
-									MovieDatabase.rateMovie(movie, value);
-
-									//$('that.parent() .current-rating')
-									//    .addClass('hidden');
-
-									$(that).parent('.my-movie').find('.current-rating').addClass('hidden');
-
-									$('.my-movie .your-rating').removeClass('hidden').find('span').html(value);
-
-									//that.find('.current-rating').addClass('hidden');
-									//$('#'+id).css('background-color', 'yellow');
-									//$(('#'+id)' .current-rating').addClass('hidden');
-								}
-							});
-						});
-					});
-
-					// Popover (Bootstrap)
-					$(document).ready(function () {
-						$('[data-toggle="popover"]').popover({
-							trigger: 'focus',
-							placement: 'auto right',
-							html: true,
-							delay: { "show": 0, "hide": 300 }
-						});
-					});
-
-					popoverTitle = movie.title + ' (' + movie.year + ')\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<a href=\'#\'><span class=\'glyphicon glyphicon-pencil\'></span></a>';
-					popoverContent = movie.description + ' \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<a href=\'#\'><span class=\'glyphicon glyphicon-pencil\'></span></a>';
-
-					// 					$(function() {
-					//     $('.movie').matchHeight();
-					// });
-
-					htmlChunk += '<div class="movie col-xs-6 col-sm-4 col-md-3" data-title="' + movie.title + '">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<div class="panel panel-default">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class="panel-heading">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<h4>' + movie.title + '<span class="badge badge-default pull-xs-right">' + rating + '</span>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</h4>\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class="panel-body my-movie">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<img src="' + movie.image + '" class="img-fluid poster" alt="' + movie.title + '" tabindex="0" data-toggle="popover" data-title="' + popoverTitle + '" data-content="' + popoverContent + '">\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t' + ratingHtml + '\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<select id="ratingSelect" class="ratingSelect custom-select mb-2 mr-sm-2 mb-sm-0">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="10">10</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="9">9</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="8">8</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="7">7</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="6">6</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="5">5</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="4">4</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="3">3</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="2">2</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="1">1</option>\n\t\t\t\t\t\t\t\t\t\t\t\t    \t</select>\n\t\t\t\t\t\t\t\t\t\t\t\t    \t<button type="button" class="btn btn-secondary btn-sm rateButton">Rate</button>\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<small class="text-muted">Last updated 3 mins ago</small>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t' + genreList + '\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t</div>';
-				};
-
-				for (var _iterator5 = moviesArray[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-					var popoverTitle;
-					var popoverContent;
-
-					_loop();
-				}
-			} catch (err) {
-				_didIteratorError5 = true;
-				_iteratorError5 = err;
-			} finally {
-				try {
-					if (!_iteratorNormalCompletion5 && _iterator5.return) {
-						_iterator5.return();
-					}
-				} finally {
-					if (_didIteratorError5) {
-						throw _iteratorError5;
-					}
-				}
-			}
-
-			movieList.innerHTML = htmlChunk;
-			//MovieDatabase.addClickEventsToMovies();
-		},
-
-		/**
-   * Create an array of movie genres based on which checkboxes are checked  
-   * @param  {Node} select 
-   * @return {Array}        Array of movie genres
-   */
-		getCheckedElements: function getCheckedElements(select) {
-			var result = [];
-			var checkboxes = select.querySelectorAll("input[type='checkbox']");
-			for (var i = 0; i < checkboxes.length; i++) {
-				if (checkboxes[i].checked) {
-					result.push(checkboxes[i].id);
-				}
-			}
-			return result;
-		},
-
-		/**
-   * Fill a select drop down list with years 
-   * @param  {Node} select 		A select node
-   */
-		fillSelectWithYears: function fillSelectWithYears(select) {
-			var htmlChunk = '<option value="all">All</option>';
-			var y = new Date().getFullYear();
-
-			for (var i = 2000; i <= y; i++) {
-				htmlChunk += '<option value="' + i + '">' + i + '</option>';
-			}
-			select.innerHTML = htmlChunk;
-		},
-
-		/**
-   * Append top list 
-   * @return {[type]} [description]
-   */
-		appendTopLists: function appendTopLists() {
-
-			//Get div-elements
-			var highestRatingList = document.getElementById('highestRatingList');
-			var lowestRatingList = document.getElementById('lowestRatingList');
-
-			var highestRatingHtmlChunk = '';
-			var lowestRatingHtmlChunk = '';
-
-			// Make new html with movies of highest and lowest rating
-			highestRatingHtmlChunk = '<span class="glyphicon glyphicon-film"></span> ' + MovieDatabase.getTopRatedMovie().title;
-			lowestRatingHtmlChunk = '<span class="glyphicon glyphicon-film"></span> ' + MovieDatabase.getWorstRatedMovie().title;
-
-			//Add the html chunks to the div-elements 
-			highestRatingList.innerHTML = highestRatingHtmlChunk;
-			lowestRatingList.innerHTML = lowestRatingHtmlChunk;
-		},
-
-		/**
-   * Sort movies by genre
-   */
-		sortByGenre: function sortByGenre() {
-			var select = document.getElementById('genresSortList');
-			var checked = MovieDatabase.getCheckedElements(select);
-			var movies = MovieDatabase.getMoviesByGenre(checked);
-			MovieDatabase.appendMovies(movies);
-		},
-
-		/**
-   * Sort movies by ratings
-   */
-		sortByRatings: function sortByRatings() {
-			var fromRating = parseInt(document.getElementById('fromRatingSortSelect').value);
-			var toRating = parseInt(document.getElementById('toRatingSortSelect').value);
-			var moviesThisRatings = MovieDatabase.getMoviesThisRatings(fromRating, toRating);
-			MovieDatabase.appendMovies(moviesThisRatings);
-		},
-
-		/**
-   * Sort movies by year
-   */
-		sortByYear: function sortByYear() {
-			if (this.value === 'all') {
-				MovieDatabase.appendMovies();
-			} else {
-				var moviesThisYear = MovieDatabase.getMoviesThisYear(this.value);
-				MovieDatabase.appendMovies(moviesThisYear);
-			}
-		},
-
-		/**
-   * Add new movie to the movie array 
-   */
-		addMovie: function addMovie() {
-			var title = document.getElementById('title');
-			var year = document.getElementById('year');
-			var description = document.getElementById('description');
-			var checked = document.getElementById('genresAddList');
-
-			// Get all checked genres
-			var genres = MovieDatabase.getCheckedElements(checked);
-
-			// Check if input values are valid
-			if (title.value === "") {
-				alert("Well... movie needs a title.");
-			} else if (year.value === 'all') {
-				alert("Pick a year.");
-			} else {
-				var newMovie = new Movie(title.value, year.value, genres, [], description.value, 'http://images.clipartpanda.com/movie-border-clipart-movie_title_border.png');
-				movies.push(newMovie);
-				MovieDatabase.appendMovies([movies[movies.length - 1]]); //Load the new movie list
-				MovieDatabase.resetInputs();
-			}
-		},
-
-		/**
-   * Edit movie in the movies array 
-   */
-		editMovie: function editMovie() {
-			var title = document.getElementById('title');
-			var checked = document.getElementById('genresAddList');
-			var year = document.getElementById('year');
-
-			if (year.value === 'all') {
-				alert("Pick a year.");
-			} else {
-				var _iteratorNormalCompletion7 = true;
-				var _didIteratorError7 = false;
-				var _iteratorError7 = undefined;
-
-				try {
-					for (var _iterator7 = movies[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-						var _movie = _step7.value;
-
-						if (_movie.title == title.value) {
-							_movie.year = year.value;
-							_movie.genres = MovieDatabase.getCheckedElements(checked);
-							_movie.description = description.value;
-							MovieDatabase.appendMovies([_movie]);
-							MovieDatabase.resetInputs();
-						}
 					}
 				} catch (err) {
-					_didIteratorError7 = true;
-					_iteratorError7 = err;
+					_didIteratorError2 = true;
+					_iteratorError2 = err;
 				} finally {
 					try {
-						if (!_iteratorNormalCompletion7 && _iterator7.return) {
-							_iterator7.return();
+						if (!_iteratorNormalCompletion2 && _iterator2.return) {
+							_iterator2.return();
 						}
 					} finally {
-						if (_didIteratorError7) {
-							throw _iteratorError7;
+						if (_didIteratorError2) {
+							throw _iteratorError2;
 						}
 					}
 				}
-			}
-		},
-
-		/**
-   * Reset input values in add/edit movie
-   */
-		resetInputs: function resetInputs() {
-			title.value = ''; //reset input value
-			description.value = ''; //reset input value
-
-			var checked = document.getElementById('genresAddList');
-			var allInput = genresAddList.querySelectorAll('input');
-
-			// reset checkboxes
-			for (var i = 0; i < allInput.length; i++) {
-				allInput[i].checked = false;
-			}
-		},
-
-		appendCounter: function appendCounter() {
-			var totalMovies = movies.length;
-			console.log(totalMovies);
-		},
-
-		appendStarRating: function appendStarRating() {
-			var myStars = document.getElementById('mystars');
-
-			var thisMovieRating = MovieDatabase.getRating(MovieDatabase.movies[0]);
-			console.log(thisMovieRating);
-
-			var htmlChunk = '<div class="stars stars-example-fontawesome-o">\n\t\t\t\t\t\t\t\t\t\t    <select id="example-fontawesome-o" name="rating" data-current-rating="5.6" autocomplete="off">\n\t\t\t\t\t\t\t\t\t\t      <option value=""></option>\n\t\t\t\t\t\t\t\t\t\t      <option value="1">1</option>\n\t\t\t\t\t\t\t\t\t\t      <option value="2">2</option>\n\t\t\t\t\t\t\t\t\t\t      <option value="3">3</option>\n\t\t\t\t\t\t\t\t\t\t      <option value="4">4</option>\n\t\t\t\t\t\t\t\t\t\t      <option value="5">5</option>\n\t\t\t\t\t\t\t\t\t\t      <option value="6">6</option>\n\t\t\t\t\t\t\t\t\t\t      <option value="7">7</option>\n\t\t\t\t\t\t\t\t\t\t      <option value="8">8</option>\n\t\t\t\t\t\t\t\t\t\t      <option value="9">9</option>\n\t\t\t\t\t\t\t\t\t\t      <option value="10">10</option>\n\t\t\t\t\t\t\t\t\t\t    </select>\n\t\t\t\t\t\t\t\t\t\t    <span class="title current-rating">\n\t\t\t\t\t\t\t\t\t\t      Current rating: <span class="value"></span>\n\t\t\t\t\t\t\t\t\t\t    </span>\n\t\t\t\t\t\t\t\t\t\t    <span class="title your-rating hidden">\n\t\t\t\t\t\t\t\t\t\t      Your rating: <span class="value"></span>&nbsp;\n\t\t\t\t\t\t\t\t\t\t      <a href="#" class="clear-rating"><i class="fa fa-times-circle"></i></a>\n\t\t\t\t\t\t\t\t\t\t    </span>\n\t\t\t\t\t\t\t\t\t\t  </div>';
-			myStars.innerHTML = htmlChunk;
+			});
 		}
+	}
+
+	/**
+  * Append movies to index.html
+  * @param  {Array} moviesArray 		Array of movie objects
+  */
+	function appendMovies(moviesArray) {
+		var _this3 = this;
+
+		var movieList = document.getElementById('movieList');
+		var htmlChunk = '';
+
+		if (moviesArray === undefined) {
+			moviesArray = movies;
+		} else if (moviesArray.length === 0) {
+			htmlChunk = '<div class="alert alert-danger" role="alert">\n  \t\t\t<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>\n  \t\t\t<span class="sr-only">Error:</span>\n  \t\t\tNo movies to display.\n\t\t\t\t</div> ';
+			movieList.innerHTML = htmlChunk;
+		}
+
+		var _iteratorNormalCompletion4 = true;
+		var _didIteratorError4 = false;
+		var _iteratorError4 = undefined;
+
+		try {
+			var _loop = function _loop() {
+				var movie = _step4.value;
+				rating = _this3.getRating(movie);
+				id = 'movie' + moviesArray.indexOf(movie);
+				genreList = '';
+				var _iteratorNormalCompletion5 = true;
+				var _didIteratorError5 = false;
+				var _iteratorError5 = undefined;
+
+				try {
+					for (var _iterator5 = movie.genres[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+						var genre = _step5.value;
+
+						genreList += '<h6 class="genre-badge"><span class="badge badge-default">' + genre + '</span></h6>';
+					}
+				} catch (err) {
+					_didIteratorError5 = true;
+					_iteratorError5 = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion5 && _iterator5.return) {
+							_iterator5.return();
+						}
+					} finally {
+						if (_didIteratorError5) {
+							throw _iteratorError5;
+						}
+					}
+				}
+
+				ratingHtml = '\n\t\t\t\t\t\t\t\t\t\t\t\t\t<select id="' + id + '" class="ratingSelect" name="rating" data-current-rating="' + rating + '" autocomplete="off">\n\t\t\t\t\t\t\t\t\t\t\t\t\t  <option value="1">1</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t  <option value="2">2</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t  <option value="3">3</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t  <option value="4">4</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t  <option value="5">5</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t</select>\n\n\t\t\t\t\t                <span class="title current-rating">\n\t\t\t\t\t                  Current rating: <span class="value">' + rating + '</span>\n\t\t\t\t\t                </span>\n\t\t\t\t\t                <span class="title your-rating hidden">\n\t\t\t\t\t                  Your rating: <span class="value"></span>&nbsp;\n\t\t\t\t\t                  <a href="#" class="clear-rating"><i class="fa fa-times-circle"></i></a>\n\t\t\t\t\t                </span>\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t';
+
+
+				$(document).ready(function () {
+					var currentRating = $('#' + id).data('current-rating');
+					$(function () {
+						$('#' + id).barrating({
+							theme: 'css-stars',
+							initialRating: currentRating,
+							showSelectedRating: false,
+							onSelect: function onSelect(value, text, event) {
+
+								var that = '#' + id;
+
+								// Funkar
+								$(that).parent().css("background-color", "red");
+
+								MovieDatabase.rateMovie(movie, value);
+
+								//$('that.parent() .current-rating')
+								//    .addClass('hidden');
+
+								$(that).parent('.my-movie').find('.current-rating').addClass('hidden');
+
+								$('.my-movie .your-rating').removeClass('hidden').find('span').html(value);
+
+								//that.find('.current-rating').addClass('hidden');
+								//$('#'+id).css('background-color', 'yellow');
+								//$(('#'+id)' .current-rating').addClass('hidden');
+							}
+						});
+					});
+				});
+
+				// Popover (Bootstrap)
+				$(document).ready(function () {
+					$('[data-toggle="popover"]').popover({
+						trigger: 'focus',
+						placement: 'auto right',
+						html: true,
+						delay: { "show": 0, "hide": 300 }
+					});
+				});
+
+				popoverTitle = movie.title + ' (' + movie.year + ')\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<a href=\'#\'><span class=\'glyphicon glyphicon-pencil\'></span></a>';
+				popoverContent = movie.description + ' \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<a href=\'#\'><span class=\'glyphicon glyphicon-pencil\'></span></a>';
+
+				// 					$(function() {
+				//     $('.movie').matchHeight();
+				// });
+
+				htmlChunk += '<div class="movie col-xs-6 col-sm-4 col-md-3" data-title="' + movie.title + '">\n\t\t\t\t\t\t\t\t\t\t\t\t<div class="panel panel-default">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<div class="panel-heading">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<h4>' + movie.title + '<span class="badge badge-default pull-xs-right">' + rating + '</span>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</h4>\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<div class="panel-body my-movie">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<img src="' + movie.image + '" class="img-fluid poster" alt="' + movie.title + '" tabindex="0" data-toggle="popover" data-title="' + popoverTitle + '" data-content="' + popoverContent + '">\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t' + ratingHtml + '\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<select id="ratingSelect" class="ratingSelect custom-select mb-2 mr-sm-2 mb-sm-0">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="10">10</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="9">9</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="8">8</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="7">7</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="6">6</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="5">5</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="4">4</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="3">3</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="2">2</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="1">1</option>\n\t\t\t\t\t\t\t\t\t\t\t    \t</select>\n\t\t\t\t\t\t\t\t\t\t\t    \t<button type="button" class="btn btn-secondary btn-sm rateButton">Rate</button>\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<small class="text-muted">Last updated 3 mins ago</small>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t' + genreList + '\n\t\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t</div>';
+			};
+
+			for (var _iterator4 = moviesArray[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+				var rating;
+				var id;
+				var genreList;
+				var ratingHtml;
+				var popoverTitle;
+				var popoverContent;
+
+				_loop();
+			}
+		} catch (err) {
+			_didIteratorError4 = true;
+			_iteratorError4 = err;
+		} finally {
+			try {
+				if (!_iteratorNormalCompletion4 && _iterator4.return) {
+					_iterator4.return();
+				}
+			} finally {
+				if (_didIteratorError4) {
+					throw _iteratorError4;
+				}
+			}
+		}
+
+		movieList.innerHTML = htmlChunk;
+		//MovieDatabase.addClickEventsToMovies();
+	}
+
+	/**
+  * Create an array of movie genres based on which checkboxes are checked  
+  * @param  {Node} select 
+  * @return {Array}        Array of movie genres
+  */
+	function getCheckedElements(select) {
+		var result = [];
+		var checkboxes = select.querySelectorAll("input[type='checkbox']");
+		for (var i = 0; i < checkboxes.length; i++) {
+			if (checkboxes[i].checked) {
+				result.push(checkboxes[i].id);
+			}
+		}
+		return result;
+	}
+
+	/**
+  * Add new movie to the movie array 
+  */
+	function addMovie() {
+		var title = document.getElementById('title');
+		var year = document.getElementById('year');
+		var description = document.getElementById('description');
+		var checked = document.getElementById('genresAddList');
+
+		// Get all checked genres
+		var genres = MovieDatabase.getCheckedElements(checked);
+
+		// Check if input values are valid
+		if (title.value === "") {
+			alert("Well... movie needs a title.");
+		} else if (year.value === 'all') {
+			alert("Pick a year.");
+		} else {
+			var newMovie = new Movie(title.value, year.value, genres, [], description.value, 'http://images.clipartpanda.com/movie-border-clipart-movie_title_border.png');
+			movies.push(newMovie);
+			MovieDatabase.appendMovies([movies[movies.length - 1]]); //Load the new movie list
+			AppendToHtml.resetInputs();
+		}
+	}
+
+	/**
+  * Edit movie in the movies array 
+  */
+	function editMovie() {
+		var title = document.getElementById('title');
+		var checked = document.getElementById('genresAddList');
+		var year = document.getElementById('year');
+
+		if (year.value === 'all') {
+			alert("Pick a year.");
+		} else {
+			var _iteratorNormalCompletion6 = true;
+			var _didIteratorError6 = false;
+			var _iteratorError6 = undefined;
+
+			try {
+				for (var _iterator6 = movies[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+					var _movie = _step6.value;
+
+					if (_movie.title == title.value) {
+						_movie.year = year.value;
+						_movie.genres = MovieDatabase.getCheckedElements(checked);
+						_movie.description = description.value;
+						MovieDatabase.appendMovies([_movie]);
+						AppendToHtml.resetInputs();
+					}
+				}
+			} catch (err) {
+				_didIteratorError6 = true;
+				_iteratorError6 = err;
+			} finally {
+				try {
+					if (!_iteratorNormalCompletion6 && _iterator6.return) {
+						_iterator6.return();
+					}
+				} finally {
+					if (_didIteratorError6) {
+						throw _iteratorError6;
+					}
+				}
+			}
+		}
+	}
+
+	/**
+  * Get the array of genres
+  * @return {Array} 
+  */
+	function returnGenresArray() {
+		return genres;
+	}
+
+	return {
+
+		getMoviesThisYear: getMoviesThisYear,
+		getMoviesThisRatings: getMoviesThisRatings,
+		getMoviesByGenre: getMoviesByGenre,
+		getRating: getRating,
+		getTopRatedMovie: getTopRatedMovie,
+		getWorstRatedMovie: getWorstRatedMovie,
+		rateMovie: rateMovie,
+		addClickEventsToMovies: addClickEventsToMovies,
+		appendMovies: appendMovies,
+		getCheckedElements: getCheckedElements,
+		addMovie: addMovie,
+		editMovie: editMovie,
+
+		genres: returnGenresArray
 
 	};
 
 	// end of MovieDatabase
 }();
 
-MovieDatabase.appendCounter();
-//MovieDatabase.appendStarRating();
+var AppendToHtml = function () {
 
+	/**
+  * Sort movies by genre
+  */
+	function sortByGenre() {
+		var select = document.getElementById('genresSortList');
+		var checked = MovieDatabase.getCheckedElements(select);
+		var movies = MovieDatabase.getMoviesByGenre(checked);
+		MovieDatabase.appendMovies(movies);
+	}
 
-$(document).ready(function () {
-	$(function () {
-		$('#example').barrating({
-			theme: 'css-stars',
-			initialRating: 4,
-			showSelectedRating: false
+	/**
+  * Sort movies by ratings
+  */
+	function sortByRatings() {
+		var fromRating = parseInt(document.getElementById('fromRatingSortSelect').value);
+		var toRating = parseInt(document.getElementById('toRatingSortSelect').value);
+		var moviesThisRatings = MovieDatabase.getMoviesThisRatings(fromRating, toRating);
+		MovieDatabase.appendMovies(moviesThisRatings);
+	}
 
-		});
-	});
+	/**
+  * Sort movies by year
+  */
+	function sortByYear() {
+		if (this.value === 'all') {
+			MovieDatabase.appendMovies();
+		} else {
+			var moviesThisYear = MovieDatabase.getMoviesThisYear(this.value);
+			MovieDatabase.appendMovies(moviesThisYear);
+		}
+	}
+	/**
+  * Create a list of all genres with checkboxes in index.html
+  */
+	function appendGenresList() {
 
-	$(function () {
-		function ratingEnable() {
+		// Places to append to
+		var genresSortList = document.getElementById('genresSortList');
+		var genresAddList = document.getElementById('genresAddList');
 
-			var currentRating = $('#example-fontawesome-o').data('current-rating');
+		var allGenres = MovieDatabase.genres();
 
-			$('#example-fontawesome').barrating({
-				theme: 'fontawesome-stars',
-				showSelectedRating: false
-			});
+		var htmlChunk = '';
+		var _iteratorNormalCompletion7 = true;
+		var _didIteratorError7 = false;
+		var _iteratorError7 = undefined;
 
-			$('.example-css').barrating({
-				theme: 'css-stars',
-				initialRating: currentRating,
-				showSelectedRating: false
-			});
+		try {
+			for (var _iterator7 = allGenres[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+				var genre = _step7.value;
 
-			$('#example-bootstrap').barrating({
-				theme: 'bootstrap-stars',
-				showSelectedRating: false
-			});
+				htmlChunk += '\n\t\t\t\t<label class="checkbox-inline"><input type="checkbox" id="' + genre + '" value="' + genre + '">' + genre + '</label>';
+			}
 
-			$('.stars-example-fontawesome-o .current-rating').find('span').html(currentRating);
-
-			$('.stars-example-fontawesome-o .clear-rating').on('click', function (event) {
-				event.preventDefault();
-
-				$('#example-fontawesome-o').barrating('clear');
-			});
-
-			$('#example-fontawesome-o').barrating({
-				theme: 'fontawesome-stars-o',
-				showSelectedRating: false,
-				initialRating: currentRating,
-				onSelect: function onSelect(value, text) {
-					if (!value) {
-						$('#example-fontawesome-o').barrating('clear');
-					} else {
-						$('.stars-example-fontawesome-o .current-rating').addClass('hidden');
-
-						$('.stars-example-fontawesome-o .your-rating').removeClass('hidden').find('span').html(value);
-					}
-				},
-				onClear: function onClear(value, text) {
-					$('.stars-example-fontawesome-o').find('.current-rating').removeClass('hidden').end().find('.your-rating').addClass('hidden');
+			// Append to html
+		} catch (err) {
+			_didIteratorError7 = true;
+			_iteratorError7 = err;
+		} finally {
+			try {
+				if (!_iteratorNormalCompletion7 && _iterator7.return) {
+					_iterator7.return();
 				}
-			});
+			} finally {
+				if (_didIteratorError7) {
+					throw _iteratorError7;
+				}
+			}
 		}
 
-		// For testing (users without JS)
-		function ratingDisable() {
-			$('select').barrating('destroy');
+		genresSortList.innerHTML = htmlChunk;
+		genresAddList.innerHTML = htmlChunk;
+	};
+
+	/**
+  * Fill a select drop down list with years 
+  * @param  {Node} select 		A select node
+  */
+	function fillSelectWithYears(select) {
+		var htmlChunk = '<option value="all">All</option>';
+		var y = new Date().getFullYear();
+
+		for (var i = 2000; i <= y; i++) {
+			htmlChunk += '<option value="' + i + '">' + i + '</option>';
 		}
+		select.innerHTML = htmlChunk;
+	};
 
-		$('.rating-enable').click(function (event) {
-			event.preventDefault();
+	/**
+  * Reset input values in add/edit movie
+  */
+	function resetInputs() {
+		var title = document.getElementById('title');
+		var description = document.getElementById('description');
+		var allInput = document.querySelectorAll("input[type='checkbox']");
 
-			ratingEnable();
+		title.value = ''; //reset input value
+		description.value = ''; //reset input value
 
-			$(this).addClass('deactivated');
-			$('.rating-disable').removeClass('deactivated');
-		});
+		// reset checkboxes
+		for (var i = 0; i < allInput.length; i++) {
+			allInput[i].checked = false;
+		}
+	};
 
-		$('.rating-disable').click(function (event) {
-			event.preventDefault();
+	/**
+  * Append rating top lists 
+  */
+	function appendTopLists() {
 
-			ratingDisable();
+		//Get div-elements
+		var highestRatingList = document.getElementById('highestRatingList');
+		var lowestRatingList = document.getElementById('lowestRatingList');
 
-			$(this).addClass('deactivated');
-			$('.rating-enable').removeClass('deactivated');
-		});
+		var highestRatingHtmlChunk = '';
+		var lowestRatingHtmlChunk = '';
 
-		ratingEnable();
-	});
-});
+		// Make new html with movies of highest and lowest rating
+		highestRatingHtmlChunk = '<b>Highest rating:</b> ' + MovieDatabase.getTopRatedMovie().title;
+		lowestRatingHtmlChunk = '<b>Lowest rating:</b> ' + MovieDatabase.getWorstRatedMovie().title;
+
+		//Add the html chunks to the div-elements 
+		highestRatingList.innerHTML = highestRatingHtmlChunk;
+		lowestRatingList.innerHTML = lowestRatingHtmlChunk;
+	}
+
+	// function appendCounter(){
+	// 	var totalMovies = movies.length;
+	// 	console.log(totalMovies);
+	// }
+
+	function appendStarRating() {
+		var myStars = document.getElementById('mystars');
+
+		var thisMovieRating = MovieDatabase.getRating(MovieDatabase.movies[0]);
+		console.log(thisMovieRating);
+
+		var htmlChunk = '<div class="stars stars-example-fontawesome-o">\n\t\t\t\t\t\t\t\t\t    <select id="example-fontawesome-o" name="rating" data-current-rating="5.6" autocomplete="off">\n\t\t\t\t\t\t\t\t\t      <option value=""></option>\n\t\t\t\t\t\t\t\t\t      <option value="1">1</option>\n\t\t\t\t\t\t\t\t\t      <option value="2">2</option>\n\t\t\t\t\t\t\t\t\t      <option value="3">3</option>\n\t\t\t\t\t\t\t\t\t      <option value="4">4</option>\n\t\t\t\t\t\t\t\t\t      <option value="5">5</option>\n\t\t\t\t\t\t\t\t\t      <option value="6">6</option>\n\t\t\t\t\t\t\t\t\t      <option value="7">7</option>\n\t\t\t\t\t\t\t\t\t      <option value="8">8</option>\n\t\t\t\t\t\t\t\t\t      <option value="9">9</option>\n\t\t\t\t\t\t\t\t\t      <option value="10">10</option>\n\t\t\t\t\t\t\t\t\t    </select>\n\t\t\t\t\t\t\t\t\t    <span class="title current-rating">\n\t\t\t\t\t\t\t\t\t      Current rating: <span class="value"></span>\n\t\t\t\t\t\t\t\t\t    </span>\n\t\t\t\t\t\t\t\t\t    <span class="title your-rating hidden">\n\t\t\t\t\t\t\t\t\t      Your rating: <span class="value"></span>&nbsp;\n\t\t\t\t\t\t\t\t\t      <a href="#" class="clear-rating"><i class="fa fa-times-circle"></i></a>\n\t\t\t\t\t\t\t\t\t    </span>\n\t\t\t\t\t\t\t\t\t  </div>';
+		myStars.innerHTML = htmlChunk;
+	};
+
+	return {
+
+		sortByGenre: sortByGenre,
+		sortByRatings: sortByRatings,
+		sortByYear: sortByYear,
+		appendGenresList: appendGenresList,
+		fillSelectWithYears: fillSelectWithYears,
+		resetInputs: resetInputs,
+		appendTopLists: appendTopLists,
+		//appendCounter: appendCounter,
+		appendStarRating: appendStarRating
+
+		// end of return
+	};
+
+	// end of AppendToHtml
+}();
