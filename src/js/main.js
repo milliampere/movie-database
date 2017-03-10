@@ -12,7 +12,10 @@ document.addEventListener('DOMContentLoaded', function(event) {
   document.getElementById('yearSortSelect').addEventListener('change', AppendToHtml.sortByYear);
   document.getElementById('sortByRatingsButton').addEventListener('click', AppendToHtml.sortByRatings);
   
-	document.getElementById('resetButton').addEventListener('click', () => {MovieDatabase.appendMovies();});
+	document.getElementById('resetButton').addEventListener('click', () => {
+		MovieDatabase.appendMovies();
+		AppendToHtml.resetInputs();}
+	);
 	document.getElementById('editMovieButton').addEventListener('click', MovieDatabase.editMovie);
 
   AppendToHtml.appendGenresList();
@@ -22,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 	AppendToHtml.fillSelectWithYears(document.getElementById('year'));
   
   MovieDatabase.appendMovies(); 	//Fill index with movies
+  AppendToHtml.clickEventEdit();
 });
 
 /**
@@ -217,54 +221,7 @@ const MovieDatabase  = (function(){
 
 
 
-	/**
-	 * Add click events to movie list
-	 * (This is very messy code)
-	 */
-	function addClickEventsToMovies(){
-		let title = document.getElementById('title');
-		let year = document.getElementById('year');
-		let description = document.getElementById('description');
-		let genresAddList = document.getElementById('genresAddList');
 
-		let appendedMovies = document.getElementsByClassName('movie');
-		let rateButton = document.getElementsByClassName('rateButton');
-		let edit = document.getElementsByClassName('edit');
-
-
-		for(let i = 0; i < appendedMovies.length; i++) {
-			rateButton[i].addEventListener('click', function(e){
-				for(var movie of movies){
-					let datasetTitle = e.target.parentElement.parentElement.parentElement.dataset.title;
-					if (movie.title == datasetTitle){
-						let pickedRating = parseInt(e.target.previousSibling.previousSibling.value);
-						MovieDatabase.rateMovie(movie, pickedRating);			// Add rating to movie array
-						MovieDatabase.appendMovies([movie]);			// Load movie with new rating
-					}
-				}
-			});
-			edit[i].addEventListener("click", function(e) {
-				datasetTitle = e.target.parentElement.parentElement.parentElement.parentElement.dataset.title;
-				for(var movie of movies){
-					if (movie.title == datasetTitle){
-						title.value = movie.title;
-						year.value = movie.year;
-						description.value = movie.description;
-
-						var allInput = genresAddList.querySelectorAll('input');
-
-						for (let j = 0; j < allInput.length; j++) {
-							for(let genre of movie.genres){
-								if (allInput[j].id == genre){
-								 	allInput[j].checked = true;
-								 }
-							}
-						}
-					}
-				}
-			});			
-		}
-	}
 
   /**
    * Append movies to index.html
@@ -383,7 +340,7 @@ const MovieDatabase  = (function(){
 														</h4>				
 													</div>
 													<div class="panel-body my-movie">
-														<img src="${movie.image}" class="img-fluid poster" alt="${movie.title}" tabindex="0" data-toggle="popover" data-title="${popoverTitle}" data-content="${popoverContent}">
+														<img src="${movie.image}" class="img-fluid poster" alt="${movie.title}">
 
 														${ratingHtml}
 
@@ -399,7 +356,9 @@ const MovieDatabase  = (function(){
 															<option value="2">2</option>
 															<option value="1">1</option>
 											    	</select>
-											    	<button type="button" class="btn btn-secondary btn-sm rateButton">Rate</button>
+											    	<button type="button" class="btn btn-sm align-middle btn-info rateButton">Rate</button>
+											    	<button type="button" class="btn btn-sm align-middle btn-info editButton">Edit</button>
+											    
 
 														<small class="text-muted">Last updated 3 mins ago</small>
 														
@@ -498,7 +457,6 @@ const MovieDatabase  = (function(){
 		getTopRatedMovie: getTopRatedMovie,
 		getWorstRatedMovie: getWorstRatedMovie,
 		rateMovie: rateMovie,
-		addClickEventsToMovies: addClickEventsToMovies,
 		appendMovies: appendMovies,
 		getCheckedElements: getCheckedElements,
 		addMovie: addMovie,
@@ -624,10 +582,85 @@ const AppendToHtml  = (function(){
 		lowestRatingList.innerHTML = lowestRatingHtmlChunk;
 	} 
 
+	/**
+	 * Add click events to movie list
+	 * (This is very messy code)
+	 */
+	function addClickEventsToMovies(){
+		var title = document.getElementById('title');
+		var year = document.getElementById('year');
+		var description = document.getElementById('description');
+		var genresAddList = document.getElementById('genresAddList');
+
+		var appendedMovies = document.getElementsByClassName('movie');
+		var rateButton = document.getElementsByClassName('rateButton');
+		var edit = document.getElementsByClassName('edit');
+
+
+		for(let i = 0; i < appendedMovies.length; i++) {
+			rateButton[i].addEventListener('click', function(e){
+				for(var movie of movies){
+					let datasetTitle = e.target.parentElement.parentElement.parentElement.dataset.title;
+					if (movie.title == datasetTitle){
+						let pickedRating = parseInt(e.target.previousSibling.previousSibling.value);
+						MovieDatabase.rateMovie(movie, pickedRating);			// Add rating to movie array
+						MovieDatabase.appendMovies([movie]);			// Load movie with new rating
+					}
+				}
+			});
+			edit[i].addEventListener("click", function(e) {
+				datasetTitle = e.target.parentElement.parentElement.parentElement.parentElement.dataset.title;
+				for(var movie of movies){
+					if (movie.title == datasetTitle){
+						title.value = movie.title;
+						year.value = movie.year;
+						description.value = movie.description;
+
+						var allInput = genresAddList.querySelectorAll('input');
+
+						for (let j = 0; j < allInput.length; j++) {
+							for(let genre of movie.genres){
+								if (allInput[j].id == genre){
+								 	allInput[j].checked = true;
+								 }
+							}
+						}
+					}
+				}
+			});			
+		}
+	}
+
+	function clickEventEdit(){
+		var theParent = document.querySelector("#movieList");
+		theParent.addEventListener("click", doSomething, false);
+		//var datasetTitle = 
+	}
+
 	// function appendCounter(){
 	// 	var totalMovies = movies.length;
 	// 	console.log(totalMovies);
 	// }
+
+	function doSomething(e) {
+		// Find movie div with dataset attribute
+		var movieDiv = e.target.closest('[data-title]');
+		// Get dataset title
+		var datasetTitle = movieDiv.dataset.title;
+
+    if (e.target !== e.currentTarget) {
+        var clickedItem = e.target;
+        if(clickedItem.classList.contains('editButton') === true){
+        	//fillEditMovieModal();
+        	$("#editMovieModal").modal("show");
+        }
+    }
+    e.stopPropagation();
+	}
+
+	function fillEditMovieModal(){
+
+	}
 
 	function appendStarRating(){
 		var myStars = document.getElementById('mystars');
@@ -658,7 +691,7 @@ const AppendToHtml  = (function(){
 									    </span>
 									  </div>`;
 	myStars.innerHTML = htmlChunk;
-	};
+	}
 
 
 	return {
@@ -670,6 +703,8 @@ const AppendToHtml  = (function(){
 		fillSelectWithYears: fillSelectWithYears,
 		resetInputs: resetInputs,
 		appendTopLists: appendTopLists,
+		clickEventEdit: clickEventEdit,
+
 		//appendCounter: appendCounter,
 		appendStarRating: appendStarRating
 
@@ -682,3 +717,5 @@ const AppendToHtml  = (function(){
 
 
     	
+
+
