@@ -6,11 +6,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Eventlistener to apply click-functions and load content at init ...
  */
 document.addEventListener('DOMContentLoaded', function (event) {
+	// Add and edit movie events
 	document.getElementById('addMovieButton').addEventListener('click', function () {
 		MovieDatabase.addMovie();
 		$("#addMovieModal").modal("hide");
 	});
-
 	document.getElementById('editMovieButton').addEventListener('click', function () {
 		MovieDatabase.saveEditedMovie();
 		$("#editMovieModal").modal("hide");
@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 	document.getElementById('yearSortSelect').addEventListener('change', AppendToHtml.sortByYear);
 	document.getElementById('sortByRatingsButton').addEventListener('click', AppendToHtml.sortByRatings);
 
+	// Reset button event
 	document.getElementById('resetButton').addEventListener('click', function () {
 		MovieDatabase.appendMovies();
 		AppendToHtml.resetInputs();
@@ -31,9 +32,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
 	AppendToHtml.fillSelectWithYears(document.getElementById('yearSortSelect'));
 	AppendToHtml.fillSelectWithYears(document.getElementById('year'));
 
-	AppendToHtml.appendTopLists();
 	MovieDatabase.appendMovies(); //Fill index with movies
-	AppendToHtml.clickEventEdit();
+	AppendToHtml.addClickEventsToMovies(); //Add click events
 });
 
 /**
@@ -228,10 +228,11 @@ var MovieDatabase = function () {
 		if (moviesArray === undefined) {
 			moviesArray = movies;
 		} else if (moviesArray.length === 0) {
-			htmlChunk = '<div class="alert alert-danger" role="alert">\n  \t\t\t<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>\n  \t\t\t<span class="sr-only">Error:</span>\n  \t\t\tNo movies to display.\n\t\t\t\t</div> ';
+			htmlChunk = '<div class="alert alert-danger message" role="alert">No movies to display. </div>';
 			movieList.innerHTML = htmlChunk;
 		}
 
+		// Append movies
 		var _iteratorNormalCompletion = true;
 		var _didIteratorError = false;
 		var _iteratorError = undefined;
@@ -239,8 +240,9 @@ var MovieDatabase = function () {
 		try {
 			var _loop = function _loop() {
 				var movie = _step.value;
-				rating = _this3.getRating(movie);
-				id = 'movie' + moviesArray.indexOf(movie);
+
+
+				// Create genre list badges
 				genreList = '';
 				var _iteratorNormalCompletion2 = true;
 				var _didIteratorError2 = false;
@@ -252,6 +254,8 @@ var MovieDatabase = function () {
 
 						genreList += '<h6 class="genre-badge"><span class="badge badge-default">' + genre + '</span></h6>';
 					}
+
+					// Star rating
 				} catch (err) {
 					_didIteratorError2 = true;
 					_iteratorError2 = err;
@@ -267,10 +271,15 @@ var MovieDatabase = function () {
 					}
 				}
 
-				ratingHtml = '\n\t\t\t\t\t\t\t\t\t\t\t\t\t<select id="' + id + '" class="ratingSelect" name="rating" data-current-rating="' + rating + '" autocomplete="off">\n\t\t\t\t\t\t\t\t\t\t\t\t\t  <option value="1">1</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t  <option value="2">2</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t  <option value="3">3</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t  <option value="4">4</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t  <option value="5">5</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t</select>\n\n\t\t\t\t\t                <span class="title current-rating">\n\t\t\t\t\t                  Current rating: <span class="value">' + rating + '</span>\n\t\t\t\t\t                </span>\n\t\t\t\t\t                <span class="title your-rating hidden">\n\t\t\t\t\t                  Your rating: <span class="value"></span>&nbsp;\n\t\t\t\t\t                  <a href="#" class="clear-rating"><i class="fa fa-times-circle"></i></a>\n\t\t\t\t\t                </span>\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t';
+				rating = _this3.getRating(movie);
+				id = 'movie' + moviesArray.indexOf(movie);
+				//console.log(id);
+
+				ratingHtml = '\n\t\t\t\t\t\t\t\t\t\t\t\t<select id="' + id + '" class="ratingSelect" name="rating" data-current-rating="' + rating + '" autocomplete="off">\n\t\t\t\t\t\t\t\t\t\t\t\t  <option value="1">1</option>\n\t\t\t\t\t\t\t\t\t\t\t\t  <option value="2">2</option>\n\t\t\t\t\t\t\t\t\t\t\t\t  <option value="3">3</option>\n\t\t\t\t\t\t\t\t\t\t\t\t  <option value="4">4</option>\n\t\t\t\t\t\t\t\t\t\t\t\t  <option value="5">5</option>\n\t\t\t\t\t\t\t\t\t\t\t\t</select> \n\t\t\t\t                <span class="title current-rating">\n\t\t\t\t                  <small>Current rating: <span class="value">' + rating + '</span></small>\n\t\t\t\t                </span>\n\t\t\t\t                <span class="title your-rating hidden">\n\t\t\t\t                  <small>Your rating: <span class="value"></span>&nbsp;\n\t\t\t\t                  <a href="#" class="clear-rating"></a></small>\n\t\t\t\t                </span>\n\n\t\t\t\t\t\t\t\t\t\t\t\t';
 
 
 				$(document).ready(function () {
+					var id = 'movie' + moviesArray.indexOf(movie);
 					var currentRating = $('#' + id).data('current-rating');
 					$(function () {
 						$('#' + id).barrating({
@@ -278,59 +287,44 @@ var MovieDatabase = function () {
 							initialRating: currentRating,
 							showSelectedRating: false,
 							onSelect: function onSelect(value, text, event) {
+								var test = event.target;
+								var test2 = $(test).parent();
+								console.log(test2);
+								var currentSelect = '#' + id;
 
-								var that = '#' + id;
-
-								// Funkar
-								$(that).parent().css("background-color", "red");
-
+								// Add rating to movie object (value=number of the clicked star)
 								MovieDatabase.rateMovie(movie, value);
+								console.log(movie.ratings);
 
-								//$('that.parent() .current-rating')
-								//    .addClass('hidden');
+								// Add disabled class (remove?)
+								$(currentSelect).addClass('disabled').attr('disabled', true);
 
-								$(that).parent('.my-movie').find('.current-rating').addClass('hidden');
+								$(currentSelect).parent().siblings('.current-rating').addClass('hidden');
 
-								$('.my-movie .your-rating').removeClass('hidden').find('span').html(value);
+								// Only rate once
+								$(currentSelect).barrating('readonly', true);
 
-								//that.find('.current-rating').addClass('hidden');
-								//$('#'+id).css('background-color', 'yellow');
-								//$(('#'+id)' .current-rating').addClass('hidden');
+								// To change back to average rating 
+								//$(currentSelect).barrating('clear');
+
+								$(currentSelect).parent().siblings('.your-rating').removeClass('hidden').find('span').html(value);
 							}
 						});
 					});
 				});
 
-				// Popover (Bootstrap)
-				$(document).ready(function () {
-					$('[data-toggle="popover"]').popover({
-						trigger: 'focus',
-						placement: 'auto right',
-						html: true,
-						delay: { "show": 0, "hide": 300 }
-					});
-				});
-
-				popoverTitle = movie.title + ' (' + movie.year + ')\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<a href=\'#\'><span class=\'glyphicon glyphicon-pencil\'></span></a>';
-				popoverContent = movie.description + ' \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<a href=\'#\'><span class=\'glyphicon glyphicon-pencil\'></span></a>';
-
-				// 					$(function() {
-				//     $('.movie').matchHeight();
-				// });
-
-				htmlChunk += '<div class="movie col-xs-6 col-sm-4 col-md-3" data-title="' + movie.title + '">\n\t\t\t\t\t\t\t\t\t\t\t\t<div class="panel panel-default">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<div class="panel-heading">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<h4>' + movie.title + '<span class="badge badge-default pull-xs-right">' + rating + '</span>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</h4>\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<div class="panel-body my-movie">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<img src="' + movie.image + '" class="img-fluid poster" alt="' + movie.title + '">\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t' + genreList + ' <br>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<mark>' + movie.year + '</mark>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<small class="text-muted">' + movie.description + '</small>\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t' + ratingHtml + '\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<select id="ratingSelect" class="ratingSelect custom-select mb-2 mr-sm-2 mb-sm-0">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="10">10</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="9">9</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="8">8</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="7">7</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="6">6</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="5">5</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="4">4</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="3">3</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="2">2</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="1">1</option>\n\t\t\t\t\t\t\t\t\t\t\t    \t</select>\n\t\t\t\t\t\t\t\t\t\t\t    \t<button type="button" class="btn btn-sm align-middle btn-info rateButton">Rate</button>\n\t\t\t\t\t\t\t\t\t\t\t    \t<button type="button" class="btn btn-sm align-middle btn-info editButton">Edit</button>\n\t\t\t\t\t\t\t\t\t\t\t    \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t</div>';
+				htmlChunk += '<div class="movie col-xs-6 col-sm-6 col-md-4 col-lg-3" data-title="' + movie.title + '">\n\t\t\t\t\t\t\t\t\t\t\t<div class="panel panel-default">\n\t\t\t\t\t\t\t\t\t\t\t\t<div class="panel-heading">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<h4>' + movie.title + ' <span class="badge badge-default pull-xs-right">' + rating + '</span>\n\t\t\t\t\t\t\t\t\t\t\t\t\t</h4>\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t<div class="panel-body my-movie">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<img src="' + movie.image + '" class="img-fluid poster" alt="' + movie.title + '"> <br>\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t' + genreList + ' <br>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<mark>' + movie.year + '</mark>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<small class="text-muted">' + movie.description + '</small> <br>\n\t\t\t\t\t\t\t\t\t\t    \t<button type="button" class="btn btn-sm align-middle btn-info editButton">Edit</button> <br>\n\t\t\t\t\t\t\t\t\t\t    \t' + ratingHtml + ' <br>\n\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t</div>';
 			};
 
 			for (var _iterator = moviesArray[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+				var genreList;
 				var rating;
 				var id;
-				var genreList;
 				var ratingHtml;
-				var popoverTitle;
-				var popoverContent;
 
 				_loop();
 			}
+			// Append movie list to index.html
 		} catch (err) {
 			_didIteratorError = true;
 			_iteratorError = err;
@@ -347,7 +341,6 @@ var MovieDatabase = function () {
 		}
 
 		movieList.innerHTML = htmlChunk;
-		//MovieDatabase.addClickEventsToMovies();
 	}
 
 	/**
@@ -367,7 +360,7 @@ var MovieDatabase = function () {
 	}
 
 	/**
-  * Find movie in array by title name
+  * Find movie in array by title 
   * @param  {String} title 
   * @return {Object}     The movie object    
   */
@@ -432,11 +425,6 @@ var MovieDatabase = function () {
 		return genres;
 	}
 
-	// Only for testing
-	function returnMoviesArray() {
-		return movies;
-	}
-
 	return {
 
 		getMoviesThisYear: getMoviesThisYear,
@@ -453,6 +441,7 @@ var MovieDatabase = function () {
 		saveEditedMovie: saveEditedMovie,
 
 		genres: returnGenresArray
+
 	};
 
 	// end of MovieDatabase
@@ -508,7 +497,7 @@ var AppendToHtml = function () {
 			for (var _iterator3 = allGenres[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
 				var genre = _step3.value;
 
-				htmlChunk += '\n\t\t\t\t<label class="checkbox-inline"><input type="checkbox" id="' + genre + '" value="' + genre + '">' + genre + '</label>';
+				htmlChunk += '\n\t\t\t\t<label class="checkbox-inline"><input type="checkbox" id="' + genre + '" value="' + genre + '"> ' + genre + '</label> ';
 			}
 
 			// Append to html
@@ -608,9 +597,9 @@ var AppendToHtml = function () {
 				fillEditMovieModal(datasetTitle);
 			}
 			// Rate button was clicked
-			else if (clickedItem.classList.contains('rateButton') === true) {
-					console.log("RATE");
-				}
+			// else if(clickedItem.classList.contains('rateButton') === true){
+			// 	console.log("RATE");
+			// }
 		}
 		e.stopPropagation();
 	}

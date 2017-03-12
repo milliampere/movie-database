@@ -2,11 +2,11 @@
  * Eventlistener to apply click-functions and load content at init ...
  */
 document.addEventListener('DOMContentLoaded', function(event) {
+	// Add and edit movie events
 	document.getElementById('addMovieButton').addEventListener('click', () => {
 		MovieDatabase.addMovie();
 		$("#addMovieModal").modal("hide");
 	});
-
 	document.getElementById('editMovieButton').addEventListener('click', () => {
 		MovieDatabase.saveEditedMovie();
 		$("#editMovieModal").modal("hide");
@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
   document.getElementById('yearSortSelect').addEventListener('change', AppendToHtml.sortByYear);
   document.getElementById('sortByRatingsButton').addEventListener('click', AppendToHtml.sortByRatings);
   
+  // Reset button event
 	document.getElementById('resetButton').addEventListener('click', () => {
 		MovieDatabase.appendMovies();
 		AppendToHtml.resetInputs();}
@@ -26,10 +27,9 @@ document.addEventListener('DOMContentLoaded', function(event) {
   AppendToHtml.appendGenresList(document.getElementById('genresAddList'));
 	AppendToHtml.fillSelectWithYears(document.getElementById('yearSortSelect'));
 	AppendToHtml.fillSelectWithYears(document.getElementById('year'));
-  
-  AppendToHtml.appendTopLists(); 
-  MovieDatabase.appendMovies(); 	//Fill index with movies
-  AppendToHtml.clickEventEdit();
+   
+  MovieDatabase.appendMovies(); 						//Fill index with movies
+  AppendToHtml.addClickEventsToMovies(); 		//Add click events
 });
 
 /**
@@ -223,160 +223,118 @@ const MovieDatabase  = (function(){
 		movie.ratings.push(parseInt(rating));
 	}
 
-
-
-
-
   /**
    * Append movies to index.html
    * @param  {Array} moviesArray 		Array of movie objects
    */
 	function appendMovies(moviesArray) {
-		let movieList = document.getElementById('movieList');
-		let htmlChunk = '';
+		var movieList = document.getElementById('movieList');
+		var htmlChunk = '';
 
 		if(moviesArray===undefined){
 			moviesArray = movies;
 		}
 		else if(moviesArray.length === 0){
-			htmlChunk = `<div class="alert alert-danger" role="alert">
-  			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-  			<span class="sr-only">Error:</span>
-  			No movies to display.
-				</div> `;
+			htmlChunk = `<div class="alert alert-danger message" role="alert">No movies to display. </div>`;
 				movieList.innerHTML = htmlChunk;
 		}
 		
-
-
-			for(let movie of moviesArray){
-				
-				var rating = this.getRating(movie);
-
-				var id = 'movie'+moviesArray.indexOf(movie);
-				
-				var genreList = '';
-				for(let genre of movie.genres){
-					genreList += `<h6 class="genre-badge"><span class="badge badge-default">${genre}</span></h6>`;
-				}
-
-
-				var ratingHtml = `
-													<select id="${id}" class="ratingSelect" name="rating" data-current-rating="${rating}" autocomplete="off">
-													  <option value="1">1</option>
-													  <option value="2">2</option>
-													  <option value="3">3</option>
-													  <option value="4">4</option>
-													  <option value="5">5</option>
-													</select>
-
-					                <span class="title current-rating">
-					                  Current rating: <span class="value">${rating}</span>
-					                </span>
-					                <span class="title your-rating hidden">
-					                  Your rating: <span class="value"></span>&nbsp;
-					                  <a href="#" class="clear-rating"><i class="fa fa-times-circle"></i></a>
-					                </span>
-
-													`;
-
-
-
-				$(document).ready(function(){
-					var currentRating = $('#'+id).data('current-rating');
-				   $(function() {
-				      $('#'+id).barrating({
-				        theme: 'css-stars',
-				        initialRating: currentRating,
-				        showSelectedRating: false,
-				        onSelect:function(value, text, event){
-
-				        	var that = '#'+id;
-
-				        	// Funkar
-				        	$(that).parent().css( "background-color", "red" );
-
-				        	MovieDatabase.rateMovie(movie, value);
-				        	
-				        	//$('that.parent() .current-rating')
-                  //    .addClass('hidden');
-
-                  $(that).parent('.my-movie').find('.current-rating').addClass('hidden');
-
-                  $('.my-movie .your-rating')
-                      .removeClass('hidden')
-                      .find('span')
-                      .html(value);
-
-				        	//that.find('.current-rating').addClass('hidden');
-				        	//$('#'+id).css('background-color', 'yellow');
-				        	//$(('#'+id)' .current-rating').addClass('hidden');
-				        } 
-				      });
-				   });
-				});				
-
-
-
-				// Popover (Bootstrap)
-				$(document).ready(function(){
-				    $('[data-toggle="popover"]').popover({
-				    	trigger: 'focus',
-				    	placement: 'auto right',
-				    	html: true,
-				    	delay: { "show": 0, "hide": 300 }
-				    }); 
-				});
-
-				var popoverTitle = `${movie.title} (${movie.year})
-														<a href='#'><span class='glyphicon glyphicon-pencil'></span></a>`;
-				var popoverContent = `${movie.description} 
-															<a href='#'><span class='glyphicon glyphicon-pencil'></span></a>`;
-
-		// 					$(function() {
-		//     $('.movie').matchHeight();
-		// });
-
-				htmlChunk += `<div class="movie col-xs-6 col-sm-4 col-md-3" data-title="${movie.title}">
-												<div class="panel panel-default">
-													<div class="panel-heading">
-														<h4>${movie.title}<span class="badge badge-default pull-xs-right">${rating}</span>
-														</h4>				
-													</div>
-													<div class="panel-body my-movie">
-														<img src="${movie.image}" class="img-fluid poster" alt="${movie.title}">
-
-														${genreList} <br>
-														<mark>${movie.year}</mark>
-														<small class="text-muted">${movie.description}</small>
-
-														${ratingHtml}
-
-														<select id="ratingSelect" class="ratingSelect custom-select mb-2 mr-sm-2 mb-sm-0">
-															<option value="10">10</option>
-															<option value="9">9</option>
-															<option value="8">8</option>
-															<option value="7">7</option>
-															<option value="6">6</option>
-															<option value="5">5</option>
-															<option value="4">4</option>
-															<option value="3">3</option>
-															<option value="2">2</option>
-															<option value="1">1</option>
-											    	</select>
-											    	<button type="button" class="btn btn-sm align-middle btn-info rateButton">Rate</button>
-											    	<button type="button" class="btn btn-sm align-middle btn-info editButton">Edit</button>
-											    
-														
-
-														
-														
-													</div>
-												</div>
-											</div>`;
+		// Append movies
+		for(let movie of moviesArray){
+			
+			// Create genre list badges
+			var genreList = '';
+			for(let genre of movie.genres){
+				genreList += `<h6 class="genre-badge"><span class="badge badge-default">${genre}</span></h6>`;
 			}
-			movieList.innerHTML = htmlChunk;
-			//MovieDatabase.addClickEventsToMovies();
+
+			// Star rating
+			var rating = this.getRating(movie);
+			var id = 'movie'+moviesArray.indexOf(movie);
+			//console.log(id);
+			var ratingHtml = `
+												<select id="${id}" class="ratingSelect" name="rating" data-current-rating="${rating}" autocomplete="off">
+												  <option value="1">1</option>
+												  <option value="2">2</option>
+												  <option value="3">3</option>
+												  <option value="4">4</option>
+												  <option value="5">5</option>
+												</select> 
+				                <span class="title current-rating">
+				                  <small>Current rating: <span class="value">${rating}</span></small>
+				                </span>
+				                <span class="title your-rating hidden">
+				                  <small>Your rating: <span class="value"></span>&nbsp;
+				                  <a href="#" class="clear-rating"></a></small>
+				                </span>
+
+												`;
+
+			$(document).ready(function(){
+				var id = 'movie'+moviesArray.indexOf(movie);
+				var currentRating = $('#'+id).data('current-rating');
+				$(function() {
+					$('#'+id).barrating({
+						theme: 'css-stars',
+						initialRating: currentRating,
+						showSelectedRating: false,
+						onSelect:function(value, text, event){
+							var test = event.target;
+							var test2 = $(test).parent();
+							console.log(test2);
+							var currentSelect = '#'+id;
+
+							// Add rating to movie object (value=number of the clicked star)
+							MovieDatabase.rateMovie(movie, value);
+							console.log(movie.ratings);
+
+							// Add disabled class (remove?)
+							$(currentSelect)
+							.addClass('disabled')
+							.attr('disabled', true);
+
+							$(currentSelect)
+								.parent()
+								.siblings('.current-rating')
+								.addClass('hidden');
+
+							// Only rate once
+							$(currentSelect).barrating('readonly', true);
+
+							// To change back to average rating 
+							//$(currentSelect).barrating('clear');
+
+							$(currentSelect)
+									.parent()
+									.siblings('.your-rating')
+							    .removeClass('hidden')
+							    .find('span')
+							    .html(value);
+						} 
+					});
+				});
+			});				
+
+			htmlChunk += `<div class="movie col-xs-6 col-sm-6 col-md-4 col-lg-3" data-title="${movie.title}">
+											<div class="panel panel-default">
+												<div class="panel-heading">
+													<h4>${movie.title} <span class="badge badge-default pull-xs-right">${rating}</span>
+													</h4>				
+												</div>
+												<div class="panel-body my-movie">
+													<img src="${movie.image}" class="img-fluid poster" alt="${movie.title}"> <br>
+
+													${genreList} <br>
+													<mark>${movie.year}</mark>
+													<small class="text-muted">${movie.description}</small> <br>
+										    	<button type="button" class="btn btn-sm align-middle btn-info editButton">Edit</button> <br>
+										    	${ratingHtml} <br>
+												</div>
+											</div>
+										</div>`;
+		}
+		// Append movie list to index.html
+		movieList.innerHTML = htmlChunk;
 	}
 
 	/**
@@ -396,7 +354,7 @@ const MovieDatabase  = (function(){
 	}		
 
 	/**
-	 * Find movie in array by title name
+	 * Find movie in array by title 
 	 * @param  {String} title 
 	 * @return {Object}     The movie object    
 	 */
@@ -405,7 +363,6 @@ const MovieDatabase  = (function(){
 			return (movie.title == title);
 		}))[0];
 	}
-
 
 	/**
 	 * Add new movie to the movie array 
@@ -433,7 +390,6 @@ const MovieDatabase  = (function(){
 			AppendToHtml.resetInputs();
 		}
 	} 
-
 
 	/**
 	 * Edit movie in the movies array 
@@ -465,11 +421,6 @@ const MovieDatabase  = (function(){
 		return genres;
 	}
 
-	// Only for testing
-	function returnMoviesArray(){
-			return movies;
-	}
-
 	return {
 
 		getMoviesThisYear: getMoviesThisYear,
@@ -486,7 +437,6 @@ const MovieDatabase  = (function(){
 		saveEditedMovie: saveEditedMovie,
 
 		genres: returnGenresArray,
-		//movies: returnMoviesArray,
 
 
 	// end of return
@@ -543,7 +493,7 @@ const AppendToHtml  = (function(){
 		let htmlChunk = '';
 		for(let genre of allGenres){
 			htmlChunk += `
-				<label class="checkbox-inline"><input type="checkbox" id="${genre}" value="${genre}">${genre}</label>`;
+				<label class="checkbox-inline"><input type="checkbox" id="${genre}" value="${genre}"> ${genre}</label> `;
 		}
 
 		// Append to html
@@ -628,9 +578,9 @@ const AppendToHtml  = (function(){
         	fillEditMovieModal(datasetTitle);
         }
         // Rate button was clicked
-        else if(clickedItem.classList.contains('rateButton') === true){
-        	console.log("RATE");
-        }
+        // else if(clickedItem.classList.contains('rateButton') === true){
+        // 	console.log("RATE");
+        // }
     }
     e.stopPropagation();
 	}

@@ -1,16 +1,19 @@
 html, body {
 	font-family: 16px/1.5 "Verdana";
 	margin: 0.8rem;
-	background-color: #FFF;
+	background-color: #c0c0c0;
 }
 
 .label {
 	margin: 1px;
 }
 
-.poster {
-	/*max-width: 100%;*/
+.wrap {
+ max-width: 1120px;
+ background-color: #FFF;
+ padding: 2rem;
 }
+
 
 .genre-badge {
 	display: inline;
@@ -22,52 +25,19 @@ html, body {
   visibility: hidden;
 }
 
+.message {
+	margin-left: 30px;
+}
 
 .movie {
-/*	max-height: 500px;
-	min-height: 500px;*/
-	/*height: 30vw;*/
-}
-
-.box{
-	/*height: 50vh;
-	min-height: 350px;
-	background-color: teal;*/
-}
-
-.flex {
-	/*display: flex;*/
-}
-
-.flex-row {
-	/*flex-direction: row;*/
-}
-
-.flex-wrap {
-	/*flex-wrap: wrap;*/
-}
-
-.flex-justify-content {
-	/*justify-content: space-around;*/
+	padding: 20px;
 }
 
 
-.equal {
-  /*display: inline-flex;*/
+/* Star rating */ 
+.br-theme-css-stars .br-widget a.br-active:after {
+  color: #63b1d3;
 }
-
-div[class*='col-'] {
-  /*flex:1 1 auto;*/
-  /*display: inline-flex;*/
-}
-.panel {
-  /*flex:1 0 100%;*/
-}
-
-
-
-
-
 
 
 /* The Modal (background) */
