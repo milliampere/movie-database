@@ -8,7 +8,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 document.addEventListener('DOMContentLoaded', function (event) {
 	document.getElementById('addMovieButton').addEventListener('click', function () {
 		MovieDatabase.addMovie();
-		$("#addMovie").modal("hide");
+		$("#addMovieModal").modal("hide");
+	});
+
+	document.getElementById('editMovieButton').addEventListener('click', function () {
+		MovieDatabase.saveEditedMovie();
+		$("#editMovieModal").modal("hide");
 	});
 
 	// Filter button events
@@ -20,14 +25,13 @@ document.addEventListener('DOMContentLoaded', function (event) {
 		MovieDatabase.appendMovies();
 		AppendToHtml.resetInputs();
 	});
-	document.getElementById('editMovieButton').addEventListener('click', MovieDatabase.editMovie);
 
-	AppendToHtml.appendGenresList();
-	AppendToHtml.appendTopLists();
-
+	AppendToHtml.appendGenresList(document.getElementById('genresSortList'));
+	AppendToHtml.appendGenresList(document.getElementById('genresAddList'));
 	AppendToHtml.fillSelectWithYears(document.getElementById('yearSortSelect'));
 	AppendToHtml.fillSelectWithYears(document.getElementById('year'));
 
+	AppendToHtml.appendTopLists();
 	MovieDatabase.appendMovies(); //Fill index with movies
 	AppendToHtml.clickEventEdit();
 });
@@ -314,7 +318,7 @@ var MovieDatabase = function () {
 				//     $('.movie').matchHeight();
 				// });
 
-				htmlChunk += '<div class="movie col-xs-6 col-sm-4 col-md-3" data-title="' + movie.title + '">\n\t\t\t\t\t\t\t\t\t\t\t\t<div class="panel panel-default">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<div class="panel-heading">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<h4>' + movie.title + '<span class="badge badge-default pull-xs-right">' + rating + '</span>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</h4>\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<div class="panel-body my-movie">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<img src="' + movie.image + '" class="img-fluid poster" alt="' + movie.title + '">\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t' + ratingHtml + '\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<select id="ratingSelect" class="ratingSelect custom-select mb-2 mr-sm-2 mb-sm-0">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="10">10</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="9">9</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="8">8</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="7">7</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="6">6</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="5">5</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="4">4</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="3">3</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="2">2</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="1">1</option>\n\t\t\t\t\t\t\t\t\t\t\t    \t</select>\n\t\t\t\t\t\t\t\t\t\t\t    \t<button type="button" class="btn btn-sm align-middle btn-info rateButton">Rate</button>\n\t\t\t\t\t\t\t\t\t\t\t    \t<button type="button" class="btn btn-sm align-middle btn-info editButton">Edit</button>\n\t\t\t\t\t\t\t\t\t\t\t    \n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<small class="text-muted">Last updated 3 mins ago</small>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t' + genreList + '\n\t\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t</div>';
+				htmlChunk += '<div class="movie col-xs-6 col-sm-4 col-md-3" data-title="' + movie.title + '">\n\t\t\t\t\t\t\t\t\t\t\t\t<div class="panel panel-default">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<div class="panel-heading">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<h4>' + movie.title + '<span class="badge badge-default pull-xs-right">' + rating + '</span>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</h4>\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<div class="panel-body my-movie">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<img src="' + movie.image + '" class="img-fluid poster" alt="' + movie.title + '">\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t' + genreList + ' <br>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<mark>' + movie.year + '</mark>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<small class="text-muted">' + movie.description + '</small>\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t' + ratingHtml + '\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<select id="ratingSelect" class="ratingSelect custom-select mb-2 mr-sm-2 mb-sm-0">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="10">10</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="9">9</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="8">8</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="7">7</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="6">6</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="5">5</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="4">4</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="3">3</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="2">2</option>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value="1">1</option>\n\t\t\t\t\t\t\t\t\t\t\t    \t</select>\n\t\t\t\t\t\t\t\t\t\t\t    \t<button type="button" class="btn btn-sm align-middle btn-info rateButton">Rate</button>\n\t\t\t\t\t\t\t\t\t\t\t    \t<button type="button" class="btn btn-sm align-middle btn-info editButton">Edit</button>\n\t\t\t\t\t\t\t\t\t\t\t    \n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t</div>';
 			};
 
 			for (var _iterator = moviesArray[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
@@ -363,6 +367,17 @@ var MovieDatabase = function () {
 	}
 
 	/**
+  * Find movie in array by title name
+  * @param  {String} title 
+  * @return {Object}     The movie object    
+  */
+	function findMovie(title) {
+		return movies.filter(function (movie) {
+			return movie.title == title;
+		})[0];
+	}
+
+	/**
   * Add new movie to the movie array 
   */
 	function addMovie() {
@@ -390,45 +405,23 @@ var MovieDatabase = function () {
 	/**
   * Edit movie in the movies array 
   */
-	function editMovie() {
-		var title = document.getElementById('title');
-		var checked = document.getElementById('genresAddList');
-		var year = document.getElementById('year');
+	function saveEditedMovie() {
+		// Find movie object in database
+		var titleEdit = document.getElementById('titleEdit').value;
+		var movie = MovieDatabase.findMovie(titleEdit);
 
-		if (year.value === 'all') {
-			alert("Pick a year.");
-		} else {
-			var _iteratorNormalCompletion3 = true;
-			var _didIteratorError3 = false;
-			var _iteratorError3 = undefined;
+		// Get changed input data
+		var yearEdit = document.getElementById('yearEdit');
+		var descriptionEdit = document.getElementById('descriptionEdit');
+		var genresEditList = document.getElementById('genresEditList');
 
-			try {
-				for (var _iterator3 = movies[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-					var _movie = _step3.value;
+		// Change movie object
+		movie.year = yearEdit.value;
+		movie.description = descriptionEdit.value;
+		movie.genres = MovieDatabase.getCheckedElements(genresEditList);
 
-					if (_movie.title == title.value) {
-						_movie.year = year.value;
-						_movie.genres = MovieDatabase.getCheckedElements(checked);
-						_movie.description = description.value;
-						MovieDatabase.appendMovies([_movie]);
-						AppendToHtml.resetInputs();
-					}
-				}
-			} catch (err) {
-				_didIteratorError3 = true;
-				_iteratorError3 = err;
-			} finally {
-				try {
-					if (!_iteratorNormalCompletion3 && _iterator3.return) {
-						_iterator3.return();
-					}
-				} finally {
-					if (_didIteratorError3) {
-						throw _iteratorError3;
-					}
-				}
-			}
-		}
+		// Update interface
+		MovieDatabase.appendMovies();
 	}
 
 	/**
@@ -437,6 +430,11 @@ var MovieDatabase = function () {
   */
 	function returnGenresArray() {
 		return genres;
+	}
+
+	// Only for testing
+	function returnMoviesArray() {
+		return movies;
 	}
 
 	return {
@@ -450,11 +448,11 @@ var MovieDatabase = function () {
 		rateMovie: rateMovie,
 		appendMovies: appendMovies,
 		getCheckedElements: getCheckedElements,
+		findMovie: findMovie,
 		addMovie: addMovie,
-		editMovie: editMovie,
+		saveEditedMovie: saveEditedMovie,
 
 		genres: returnGenresArray
-
 	};
 
 	// end of MovieDatabase
@@ -493,48 +491,44 @@ var AppendToHtml = function () {
 			MovieDatabase.appendMovies(moviesThisYear);
 		}
 	}
+
 	/**
   * Create a list of all genres with checkboxes in index.html
+  * @param {String} element   DOM Element to add checkboxes to
   */
-	function appendGenresList() {
-
-		// Places to append to
-		var genresSortList = document.getElementById('genresSortList');
-		var genresAddList = document.getElementById('genresAddList');
-
+	function appendGenresList(element) {
 		var allGenres = MovieDatabase.genres();
 
 		var htmlChunk = '';
-		var _iteratorNormalCompletion4 = true;
-		var _didIteratorError4 = false;
-		var _iteratorError4 = undefined;
+		var _iteratorNormalCompletion3 = true;
+		var _didIteratorError3 = false;
+		var _iteratorError3 = undefined;
 
 		try {
-			for (var _iterator4 = allGenres[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-				var genre = _step4.value;
+			for (var _iterator3 = allGenres[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+				var genre = _step3.value;
 
 				htmlChunk += '\n\t\t\t\t<label class="checkbox-inline"><input type="checkbox" id="' + genre + '" value="' + genre + '">' + genre + '</label>';
 			}
 
 			// Append to html
 		} catch (err) {
-			_didIteratorError4 = true;
-			_iteratorError4 = err;
+			_didIteratorError3 = true;
+			_iteratorError3 = err;
 		} finally {
 			try {
-				if (!_iteratorNormalCompletion4 && _iterator4.return) {
-					_iterator4.return();
+				if (!_iteratorNormalCompletion3 && _iterator3.return) {
+					_iterator3.return();
 				}
 			} finally {
-				if (_didIteratorError4) {
-					throw _iteratorError4;
+				if (_didIteratorError3) {
+					throw _iteratorError3;
 				}
 			}
 		}
 
-		genresSortList.innerHTML = htmlChunk;
-		genresAddList.innerHTML = htmlChunk;
-	};
+		element.innerHTML = htmlChunk;
+	}
 
 	/**
   * Fill a select drop down list with years 
@@ -548,7 +542,7 @@ var AppendToHtml = function () {
 			htmlChunk += '<option value="' + i + '">' + i + '</option>';
 		}
 		select.innerHTML = htmlChunk;
-	};
+	}
 
 	/**
   * Reset input values in add/edit movie
@@ -590,127 +584,17 @@ var AppendToHtml = function () {
 
 	/**
   * Add click events to movie list
-  * (This is very messy code)
   */
 	function addClickEventsToMovies() {
-		var title = document.getElementById('title');
-		var year = document.getElementById('year');
-		var description = document.getElementById('description');
-		var genresAddList = document.getElementById('genresAddList');
-
-		var appendedMovies = document.getElementsByClassName('movie');
-		var rateButton = document.getElementsByClassName('rateButton');
-		var edit = document.getElementsByClassName('edit');
-
-		for (var i = 0; i < appendedMovies.length; i++) {
-			rateButton[i].addEventListener('click', function (e) {
-				var _iteratorNormalCompletion5 = true;
-				var _didIteratorError5 = false;
-				var _iteratorError5 = undefined;
-
-				try {
-					for (var _iterator5 = movies[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-						var movie = _step5.value;
-
-						var _datasetTitle = e.target.parentElement.parentElement.parentElement.dataset.title;
-						if (movie.title == _datasetTitle) {
-							var pickedRating = parseInt(e.target.previousSibling.previousSibling.value);
-							MovieDatabase.rateMovie(movie, pickedRating); // Add rating to movie array
-							MovieDatabase.appendMovies([movie]); // Load movie with new rating
-						}
-					}
-				} catch (err) {
-					_didIteratorError5 = true;
-					_iteratorError5 = err;
-				} finally {
-					try {
-						if (!_iteratorNormalCompletion5 && _iterator5.return) {
-							_iterator5.return();
-						}
-					} finally {
-						if (_didIteratorError5) {
-							throw _iteratorError5;
-						}
-					}
-				}
-			});
-			edit[i].addEventListener("click", function (e) {
-				datasetTitle = e.target.parentElement.parentElement.parentElement.parentElement.dataset.title;
-				var _iteratorNormalCompletion6 = true;
-				var _didIteratorError6 = false;
-				var _iteratorError6 = undefined;
-
-				try {
-					for (var _iterator6 = movies[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-						var movie = _step6.value;
-
-						if (movie.title == datasetTitle) {
-							title.value = movie.title;
-							year.value = movie.year;
-							description.value = movie.description;
-
-							var allInput = genresAddList.querySelectorAll('input');
-
-							for (var j = 0; j < allInput.length; j++) {
-								var _iteratorNormalCompletion7 = true;
-								var _didIteratorError7 = false;
-								var _iteratorError7 = undefined;
-
-								try {
-									for (var _iterator7 = movie.genres[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-										var genre = _step7.value;
-
-										if (allInput[j].id == genre) {
-											allInput[j].checked = true;
-										}
-									}
-								} catch (err) {
-									_didIteratorError7 = true;
-									_iteratorError7 = err;
-								} finally {
-									try {
-										if (!_iteratorNormalCompletion7 && _iterator7.return) {
-											_iterator7.return();
-										}
-									} finally {
-										if (_didIteratorError7) {
-											throw _iteratorError7;
-										}
-									}
-								}
-							}
-						}
-					}
-				} catch (err) {
-					_didIteratorError6 = true;
-					_iteratorError6 = err;
-				} finally {
-					try {
-						if (!_iteratorNormalCompletion6 && _iterator6.return) {
-							_iterator6.return();
-						}
-					} finally {
-						if (_didIteratorError6) {
-							throw _iteratorError6;
-						}
-					}
-				}
-			});
-		}
+		var movieList = document.querySelector("#movieList");
+		movieList.addEventListener("click", whenMovieIsClicked, false);
 	}
 
-	function clickEventEdit() {
-		var theParent = document.querySelector("#movieList");
-		theParent.addEventListener("click", doSomething, false);
-		//var datasetTitle = 
-	}
-
-	// function appendCounter(){
-	// 	var totalMovies = movies.length;
-	// 	console.log(totalMovies);
-	// }
-
-	function doSomething(e) {
+	/**
+  * Find out which button was clicked and do stuff
+  * @param  {MouseEvent} e 
+  */
+	function whenMovieIsClicked(e) {
 		// Find movie div with dataset attribute
 		var movieDiv = e.target.closest('[data-title]');
 		// Get dataset title
@@ -718,15 +602,81 @@ var AppendToHtml = function () {
 
 		if (e.target !== e.currentTarget) {
 			var clickedItem = e.target;
+			// Edit button was clicked
 			if (clickedItem.classList.contains('editButton') === true) {
-				//fillEditMovieModal();
 				$("#editMovieModal").modal("show");
+				fillEditMovieModal(datasetTitle);
 			}
+			// Rate button was clicked
+			else if (clickedItem.classList.contains('rateButton') === true) {
+					console.log("RATE");
+				}
 		}
 		e.stopPropagation();
 	}
 
-	function fillEditMovieModal() {}
+	/**
+  * Fill inputs in edit movie modal with movie information from the database
+  * @param  {String} title  Movie title
+  */
+	function fillEditMovieModal(title) {
+		// Find movie object in database
+		var movie = MovieDatabase.findMovie(title);
+
+		// Fill select with years
+		fillSelectWithYears(document.getElementById('yearEdit'));
+
+		// Append genre list with checked genres
+		var genresEditList = document.getElementById('genresEditList');
+		appendGenresList(genresEditList);
+		fillGenreListWithChecked(genresEditList, movie.genres);
+
+		// Fill input values
+		document.getElementById('titleEdit').value = movie.title;
+		document.getElementById('yearEdit').value = movie.year;
+		document.getElementById('descriptionEdit').value = movie.description;
+	}
+
+	/**
+  * Fill checkbox inputs with checked genres 
+  * @param  {String} element 	DOM element with checkboxes 
+  * @param  {Array} genres  		Array of genres
+  */
+	function fillGenreListWithChecked(element, genres) {
+
+		// Get all checkbox inputs
+		var allInput = element.querySelectorAll('input');
+
+		// Look for match in checkbox input id and genre in movie object
+		for (var i = 0; i < allInput.length; i++) {
+			var _iteratorNormalCompletion4 = true;
+			var _didIteratorError4 = false;
+			var _iteratorError4 = undefined;
+
+			try {
+				for (var _iterator4 = genres[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+					var genre = _step4.value;
+
+					if (allInput[i].id == genre) {
+						allInput[i].checked = true;
+					}
+				}
+			} catch (err) {
+				_didIteratorError4 = true;
+				_iteratorError4 = err;
+			} finally {
+				try {
+					if (!_iteratorNormalCompletion4 && _iterator4.return) {
+						_iterator4.return();
+					}
+				} finally {
+					if (_didIteratorError4) {
+						throw _iteratorError4;
+					}
+				}
+			}
+		}
+	}
 
 	function appendStarRating() {
 		var myStars = document.getElementById('mystars');
@@ -747,7 +697,7 @@ var AppendToHtml = function () {
 		fillSelectWithYears: fillSelectWithYears,
 		resetInputs: resetInputs,
 		appendTopLists: appendTopLists,
-		clickEventEdit: clickEventEdit,
+		addClickEventsToMovies: addClickEventsToMovies,
 
 		//appendCounter: appendCounter,
 		appendStarRating: appendStarRating
