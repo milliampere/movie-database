@@ -13,23 +13,23 @@ document.addEventListener('DOMContentLoaded', function(event) {
 	});
 
 	// Filter button events
-	document.getElementById('sortByGenresButton').addEventListener('click', AppendToHtml.sortByGenre);
-  document.getElementById('yearSortSelect').addEventListener('change', AppendToHtml.sortByYear);
-  document.getElementById('sortByRatingsButton').addEventListener('click', AppendToHtml.sortByRatings);
+	document.getElementById('sortByGenresButton').addEventListener('click', Interface.sortByGenre);
+  document.getElementById('yearSortSelect').addEventListener('change', Interface.sortByYear);
+  document.getElementById('sortByRatingsButton').addEventListener('click', Interface.sortByRatings);
   
   // Reset button event
 	document.getElementById('resetButton').addEventListener('click', () => {
 		MovieDatabase.appendMovies();
-		AppendToHtml.resetInputs();}
+		Interface.resetInputs();}
 	);
 
-  AppendToHtml.appendGenresList(document.getElementById('genresSortList'));
-  AppendToHtml.appendGenresList(document.getElementById('genresAddList'));
-	AppendToHtml.fillSelectWithYears(document.getElementById('yearSortSelect'));
-	AppendToHtml.fillSelectWithYears(document.getElementById('year'));
+  Interface.appendGenresList(document.getElementById('genresSortList'));
+  Interface.appendGenresList(document.getElementById('genresAddList'));
+	Interface.fillSelectWithYears(document.getElementById('yearSortSelect'));
+	Interface.fillSelectWithYears(document.getElementById('year'));
    
   MovieDatabase.appendMovies(); 						//Fill index with movies
-  AppendToHtml.addClickEventsToMovies(); 		//Add click events
+  Interface.addClickEventsToMovies(); 		//Add click events
 });
 
 /**
@@ -387,7 +387,7 @@ const MovieDatabase  = (function(){
 			const newMovie = new Movie(title.value, year.value, genres, [], description.value, 'http://images.clipartpanda.com/movie-border-clipart-movie_title_border.png');
 			movies.push(newMovie);
 			MovieDatabase.appendMovies([movies[movies.length-1]]); 	//Load the new movie list
-			AppendToHtml.resetInputs();
+			Interface.resetInputs();
 		}
 	} 
 
@@ -447,8 +447,10 @@ const MovieDatabase  = (function(){
 
 
 
-
-const AppendToHtml  = (function(){
+/**
+ * View
+ */
+const Interface  = (function(){
 
 	/**
 	 * Sort movies by genre
@@ -677,7 +679,7 @@ const AppendToHtml  = (function(){
 	// end of return
 	};
 
-// end of AppendToHtml
+// end of Interface
 })();
 
 
