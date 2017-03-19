@@ -13,23 +13,27 @@ document.addEventListener('DOMContentLoaded', function(event) {
 	});
 
 	// Filter button events
-	document.getElementById('sortByGenresButton').addEventListener('click', Interface.sortByGenre);
-  document.getElementById('yearSortSelect').addEventListener('change', Interface.sortByYear);
-  document.getElementById('sortByRatingsButton').addEventListener('click', Interface.sortByRatings);
+	document.getElementById('sortByGenresButton').addEventListener('click', View.sortByGenre);
+  document.getElementById('yearSortSelect').addEventListener('change', View.sortByYear);
+  document.getElementById('sortByRatingsButton').addEventListener('click', View.sortByRatings);
   
   // Reset button event
 	document.getElementById('resetButton').addEventListener('click', () => {
 		MovieDatabase.appendMovies();
-		Interface.resetInputs();}
+		View.resetInputs();}
+	);
+	document.getElementById('logo').addEventListener('click', () => {
+		MovieDatabase.appendMovies();
+		View.resetInputs();}
 	);
 
-  Interface.appendGenresList(document.getElementById('genresSortList'));
-  Interface.appendGenresList(document.getElementById('genresAddList'));
-	Interface.fillSelectWithYears(document.getElementById('yearSortSelect'));
-	Interface.fillSelectWithYears(document.getElementById('year'));
+  View.appendGenresList(document.getElementById('genresSortList'));
+  View.appendGenresList(document.getElementById('genresAddList'));
+	View.fillSelectWithYears(document.getElementById('yearSortSelect'));
+	View.fillSelectWithYears(document.getElementById('year'));
    
   MovieDatabase.appendMovies(); 						//Fill index with movies
-  Interface.addClickEventsToMovies(); 		//Add click events
+  View.addClickEventsToMovies(); 		//Add click events
 });
 
 /**
@@ -270,6 +274,7 @@ const MovieDatabase  = (function(){
 
 												`;
 
+												
 			$(document).ready(function(){
 				var id = 'movie'+moviesArray.indexOf(movie);
 				var currentRating = $('#'+id).data('current-rating');
@@ -316,22 +321,23 @@ const MovieDatabase  = (function(){
 			});				
 
 			htmlChunk += `<div class="movie col-xs-6 col-sm-6 col-md-4 col-lg-3" data-title="${movie.title}">
-											<div class="panel panel-default">
-												<div class="panel-heading">
-													<h4>${movie.title} <span class="badge badge-default pull-xs-right">${rating}</span>
-													</h4>				
-												</div>
-												<div class="panel-body my-movie">
-													<img src="${movie.image}" class="img-fluid poster" alt="${movie.title}"> <br>
-
-													${genreList} <br>
-													<mark>${movie.year}</mark>
-													<small class="text-muted">${movie.description}</small> <br>
-										    	<button type="button" class="btn btn-sm align-middle btn-info editButton">Edit</button> <br>
-										    	${ratingHtml} <br>
-												</div>
-											</div>
-										</div>`;
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<h5>${movie.title}</h5>				
+								</div>
+								<div class="panel-body my-movie movie-box">
+									<figure class="img-figure" onclick="void(0)">
+										<img src="${movie.image}" class="img-fluid poster" alt="${movie.title}"> <br>
+									</figure>
+									<div class="movie-description">
+										<div>${genreList}<br><br></div>
+										<div><h6 class="genre-badge"><span class="badge badge-default">${movie.year}</span></h6> ${movie.description}
+										<img src="dist/images/edit.svg" class="editButton edit-icon" alt="Edit"></div> <br>
+										<div class="center">${ratingHtml}</div> <br>
+									</div>
+								</div>
+							</div>
+						</div>`;
 		}
 		// Append movie list to index.html
 		movieList.innerHTML = htmlChunk;
@@ -358,7 +364,7 @@ const MovieDatabase  = (function(){
 	 * @param  {String} title 
 	 * @return {Object}     The movie object    
 	 */
-	function findMovie(title){
+	function findMovieObjectByTitle(title){
 		return (movies.filter((movie) => {
 			return (movie.title == title);
 		}))[0];
@@ -387,7 +393,7 @@ const MovieDatabase  = (function(){
 			const newMovie = new Movie(title.value, year.value, genres, [], description.value, 'http://images.clipartpanda.com/movie-border-clipart-movie_title_border.png');
 			movies.push(newMovie);
 			MovieDatabase.appendMovies([movies[movies.length-1]]); 	//Load the new movie list
-			Interface.resetInputs();
+			View.resetInputs();
 		}
 	} 
 
@@ -397,7 +403,7 @@ const MovieDatabase  = (function(){
 	function saveEditedMovie(){
 		// Find movie object in database
 		var titleEdit = document.getElementById('titleEdit').value; 
-		var movie = MovieDatabase.findMovie(titleEdit);
+		var movie = MovieDatabase.findMovieObjectByTitle(titleEdit);
 
 		// Get changed input data
 		var yearEdit = document.getElementById('yearEdit');
@@ -409,7 +415,7 @@ const MovieDatabase  = (function(){
 		movie.description = descriptionEdit.value;
 		movie.genres = MovieDatabase.getCheckedElements(genresEditList);
 
-		// Update interface
+		// Update View
 		MovieDatabase.appendMovies();
 	} 
 
@@ -432,7 +438,7 @@ const MovieDatabase  = (function(){
 		rateMovie: rateMovie,
 		appendMovies: appendMovies,
 		getCheckedElements: getCheckedElements,
-		findMovie: findMovie,
+		findMovieObjectByTitle: findMovieObjectByTitle,
 		addMovie: addMovie,
 		saveEditedMovie: saveEditedMovie,
 
@@ -450,7 +456,7 @@ const MovieDatabase  = (function(){
 /**
  * View
  */
-const Interface  = (function(){
+const View  = (function(){
 
 	/**
 	 * Sort movies by genre
@@ -593,7 +599,7 @@ const Interface  = (function(){
 	 */
 	function fillEditMovieModal(title){
 		// Find movie object in database
-		var movie = MovieDatabase.findMovie(title); 
+		var movie = MovieDatabase.findMovieObjectByTitle(title); 
 
 		// Fill select with years
 		fillSelectWithYears(document.getElementById('yearEdit'));
@@ -679,7 +685,7 @@ const Interface  = (function(){
 	// end of return
 	};
 
-// end of Interface
+// end of View
 })();
 
 

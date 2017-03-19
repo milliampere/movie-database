@@ -17,23 +17,27 @@ document.addEventListener('DOMContentLoaded', function (event) {
 	});
 
 	// Filter button events
-	document.getElementById('sortByGenresButton').addEventListener('click', AppendToHtml.sortByGenre);
-	document.getElementById('yearSortSelect').addEventListener('change', AppendToHtml.sortByYear);
-	document.getElementById('sortByRatingsButton').addEventListener('click', AppendToHtml.sortByRatings);
+	document.getElementById('sortByGenresButton').addEventListener('click', View.sortByGenre);
+	document.getElementById('yearSortSelect').addEventListener('change', View.sortByYear);
+	document.getElementById('sortByRatingsButton').addEventListener('click', View.sortByRatings);
 
 	// Reset button event
 	document.getElementById('resetButton').addEventListener('click', function () {
 		MovieDatabase.appendMovies();
-		AppendToHtml.resetInputs();
+		View.resetInputs();
+	});
+	document.getElementById('logo').addEventListener('click', function () {
+		MovieDatabase.appendMovies();
+		View.resetInputs();
 	});
 
-	AppendToHtml.appendGenresList(document.getElementById('genresSortList'));
-	AppendToHtml.appendGenresList(document.getElementById('genresAddList'));
-	AppendToHtml.fillSelectWithYears(document.getElementById('yearSortSelect'));
-	AppendToHtml.fillSelectWithYears(document.getElementById('year'));
+	View.appendGenresList(document.getElementById('genresSortList'));
+	View.appendGenresList(document.getElementById('genresAddList'));
+	View.fillSelectWithYears(document.getElementById('yearSortSelect'));
+	View.fillSelectWithYears(document.getElementById('year'));
 
 	MovieDatabase.appendMovies(); //Fill index with movies
-	AppendToHtml.addClickEventsToMovies(); //Add click events
+	View.addClickEventsToMovies(); //Add click events
 });
 
 /**
@@ -313,7 +317,7 @@ var MovieDatabase = function () {
 					});
 				});
 
-				htmlChunk += '<div class="movie col-xs-6 col-sm-6 col-md-4 col-lg-3" data-title="' + movie.title + '">\n\t\t\t\t\t\t\t\t\t\t\t<div class="panel panel-default">\n\t\t\t\t\t\t\t\t\t\t\t\t<div class="panel-heading">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<h4>' + movie.title + ' <span class="badge badge-default pull-xs-right">' + rating + '</span>\n\t\t\t\t\t\t\t\t\t\t\t\t\t</h4>\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t\t<div class="panel-body my-movie">\n\t\t\t\t\t\t\t\t\t\t\t\t\t<img src="' + movie.image + '" class="img-fluid poster" alt="' + movie.title + '"> <br>\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t' + genreList + ' <br>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<mark>' + movie.year + '</mark>\n\t\t\t\t\t\t\t\t\t\t\t\t\t<small class="text-muted">' + movie.description + '</small> <br>\n\t\t\t\t\t\t\t\t\t\t    \t<button type="button" class="btn btn-sm align-middle btn-info editButton">Edit</button> <br>\n\t\t\t\t\t\t\t\t\t\t    \t' + ratingHtml + ' <br>\n\t\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t</div>';
+				htmlChunk += '<div class="movie col-xs-6 col-sm-6 col-md-4 col-lg-3" data-title="' + movie.title + '">\n\t\t\t\t\t\t\t<div class="panel panel-default">\n\t\t\t\t\t\t\t\t<div class="panel-heading">\n\t\t\t\t\t\t\t\t\t<h5>' + movie.title + '</h5>\t\t\t\t\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t<div class="panel-body my-movie movie-box">\n\t\t\t\t\t\t\t\t\t<figure class="img-figure" onclick="void(0)">\n\t\t\t\t\t\t\t\t\t\t<img src="' + movie.image + '" class="img-fluid poster" alt="' + movie.title + '"> <br>\n\t\t\t\t\t\t\t\t\t</figure>\n\t\t\t\t\t\t\t\t\t<div class="movie-description">\n\t\t\t\t\t\t\t\t\t\t<div>' + genreList + '<br><br></div>\n\t\t\t\t\t\t\t\t\t\t<div><h6 class="genre-badge"><span class="badge badge-default">' + movie.year + '</span></h6> ' + movie.description + '\n\t\t\t\t\t\t\t\t\t\t<img src="dist/images/edit.svg" class="editButton edit-icon" alt="Edit"></div> <br>\n\t\t\t\t\t\t\t\t\t\t<div class="center">' + ratingHtml + '</div> <br>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>';
 			};
 
 			for (var _iterator = moviesArray[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
@@ -364,7 +368,7 @@ var MovieDatabase = function () {
   * @param  {String} title 
   * @return {Object}     The movie object    
   */
-	function findMovie(title) {
+	function findMovieObjectByTitle(title) {
 		return movies.filter(function (movie) {
 			return movie.title == title;
 		})[0];
@@ -391,7 +395,7 @@ var MovieDatabase = function () {
 			var newMovie = new Movie(title.value, year.value, genres, [], description.value, 'http://images.clipartpanda.com/movie-border-clipart-movie_title_border.png');
 			movies.push(newMovie);
 			MovieDatabase.appendMovies([movies[movies.length - 1]]); //Load the new movie list
-			AppendToHtml.resetInputs();
+			View.resetInputs();
 		}
 	}
 
@@ -401,7 +405,7 @@ var MovieDatabase = function () {
 	function saveEditedMovie() {
 		// Find movie object in database
 		var titleEdit = document.getElementById('titleEdit').value;
-		var movie = MovieDatabase.findMovie(titleEdit);
+		var movie = MovieDatabase.findMovieObjectByTitle(titleEdit);
 
 		// Get changed input data
 		var yearEdit = document.getElementById('yearEdit');
@@ -413,7 +417,7 @@ var MovieDatabase = function () {
 		movie.description = descriptionEdit.value;
 		movie.genres = MovieDatabase.getCheckedElements(genresEditList);
 
-		// Update interface
+		// Update View
 		MovieDatabase.appendMovies();
 	}
 
@@ -436,7 +440,7 @@ var MovieDatabase = function () {
 		rateMovie: rateMovie,
 		appendMovies: appendMovies,
 		getCheckedElements: getCheckedElements,
-		findMovie: findMovie,
+		findMovieObjectByTitle: findMovieObjectByTitle,
 		addMovie: addMovie,
 		saveEditedMovie: saveEditedMovie,
 
@@ -447,7 +451,10 @@ var MovieDatabase = function () {
 	// end of MovieDatabase
 }();
 
-var AppendToHtml = function () {
+/**
+ * View
+ */
+var View = function () {
 
 	/**
   * Sort movies by genre
@@ -610,7 +617,7 @@ var AppendToHtml = function () {
   */
 	function fillEditMovieModal(title) {
 		// Find movie object in database
-		var movie = MovieDatabase.findMovie(title);
+		var movie = MovieDatabase.findMovieObjectByTitle(title);
 
 		// Fill select with years
 		fillSelectWithYears(document.getElementById('yearEdit'));
@@ -694,5 +701,5 @@ var AppendToHtml = function () {
 		// end of return
 	};
 
-	// end of AppendToHtml
+	// end of View
 }();
