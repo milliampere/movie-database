@@ -33,7 +33,8 @@ document.addEventListener('DOMContentLoaded', function(event) {
 	View.fillSelectWithYears(document.getElementById('year'));
    
   MovieDatabase.appendMovies(); 						//Fill index with movies
-  View.addClickEventsToMovies(); 		//Add click events
+  View.addClickEventsToMovies(); 						//Add click events
+  View.starRating();
 });
 
 /**
@@ -188,6 +189,8 @@ const MovieDatabase  = (function(){
 		return (sumOfRatings/numberOfRatings).toFixed(1);
 	}
 
+
+
   /**
    * Get the movie with highest rating
    * @return {Object}		Single movie object
@@ -227,6 +230,14 @@ const MovieDatabase  = (function(){
 		movie.ratings.push(parseInt(rating));
 	}
 
+	/**
+	 * Remove last rating in ratings array
+	 * @param  {Object}	movie		Movie object
+	 */
+	function removeRating(movie){
+		movie.ratings.pop();
+	}
+
   /**
    * Append movies to index.html
    * @param  {Array} moviesArray 		Array of movie objects
@@ -235,105 +246,40 @@ const MovieDatabase  = (function(){
 		var movieList = document.getElementById('movieList');
 		var htmlChunk = '';
 
+		// Show all movies if no filter is choosen
 		if(moviesArray===undefined){
 			moviesArray = movies;
 		}
+		// Show error message if there is no movies to display
 		else if(moviesArray.length === 0){
 			htmlChunk = `<div class="alert alert-danger message" role="alert">No movies to display. </div>`;
 				movieList.innerHTML = htmlChunk;
 		}
 		
-		// Append movies
+		// Create html for all movies
 		for(let movie of moviesArray){
 			
 			// Create genre list badges
-			var genreList = '';
+			var genreHtml = '';
 			for(let genre of movie.genres){
-				genreList += `<h6 class="genre-badge"><span class="badge badge-default">${genre}</span></h6>`;
+				genreHtml += `<h6 class="genre-badge"><span class="badge badge-default">${genre}</span></h6>`;
 			}
 
-			// Star rating
-			var rating = this.getRating(movie);
 			var id = 'movie'+moviesArray.indexOf(movie);
-			//console.log(id);
-			var ratingHtml = `
-												<select id="${id}" class="ratingSelect" name="rating" data-current-rating="${rating}" autocomplete="off">
-												  <option value="1">1</option>
-												  <option value="2">2</option>
-												  <option value="3">3</option>
-												  <option value="4">4</option>
-												  <option value="5">5</option>
-												</select> 
-				                <span class="title current-rating">
-				                  <small>Current rating: <span class="value">${rating}</span></small>
-				                </span>
-				                <span class="title your-rating hidden">
-				                  <small>Your rating: <span class="value"></span>&nbsp;
-				                  <a href="#" class="clear-rating"></a></small>
-				                </span>
+			var ratingHtml = View.createRatingHtml(movie);
 
-												`;
-
-												
-			$(document).ready(function(){
-				var id = 'movie'+moviesArray.indexOf(movie);
-				var currentRating = $('#'+id).data('current-rating');
-				$(function() {
-					$('#'+id).barrating({
-						theme: 'css-stars',
-						initialRating: currentRating,
-						showSelectedRating: false,
-						onSelect:function(value, text, event){
-							var test = event.target;
-							var test2 = $(test).parent();
-							console.log(test2);
-							var currentSelect = '#'+id;
-
-							// Add rating to movie object (value=number of the clicked star)
-							MovieDatabase.rateMovie(movie, value);
-							console.log(movie.ratings);
-
-							// Add disabled class (remove?)
-							$(currentSelect)
-							.addClass('disabled')
-							.attr('disabled', true);
-
-							$(currentSelect)
-								.parent()
-								.siblings('.current-rating')
-								.addClass('hidden');
-
-							// Only rate once
-							$(currentSelect).barrating('readonly', true);
-
-							// To change back to average rating 
-							//$(currentSelect).barrating('clear');
-
-							$(currentSelect)
-									.parent()
-									.siblings('.your-rating')
-							    .removeClass('hidden')
-							    .find('span')
-							    .html(value);
-						} 
-					});
-				});
-			});				
-
-			htmlChunk += `<div class="movie col-xs-6 col-sm-6 col-md-4 col-lg-3" data-title="${movie.title}">
+			htmlChunk += `<div class="movie col-xs-6 col-sm-6 col-md-4 col-lg-3" data-title="${movie.title}" id="${id}">
 							<div class="panel panel-default">
-								<div class="panel-heading">
-									<h5>${movie.title}</h5>				
-								</div>
+								<div class="panel-heading"><h5>${movie.title}</h5></div>
 								<div class="panel-body my-movie movie-box">
 									<figure class="img-figure" onclick="void(0)">
 										<img src="${movie.image}" class="img-fluid poster" alt="${movie.title}"> <br>
 									</figure>
 									<div class="movie-description">
-										<div>${genreList}<br><br></div>
+										<div>${genreHtml}<br><br></div>
 										<div><h6 class="genre-badge"><span class="badge badge-default">${movie.year}</span></h6> ${movie.description}
 										<img src="dist/images/edit.svg" class="editButton edit-icon" alt="Edit"></div> <br>
-										<div class="center">${ratingHtml}</div> <br>
+										<div class="star-rating center">${ratingHtml}</div> <br>
 									</div>
 								</div>
 							</div>
@@ -436,6 +382,7 @@ const MovieDatabase  = (function(){
 		getTopRatedMovie: getTopRatedMovie,
 		getWorstRatedMovie: getWorstRatedMovie,
 		rateMovie: rateMovie,
+		removeRating: removeRating,
 		appendMovies: appendMovies,
 		getCheckedElements: getCheckedElements,
 		findMovieObjectByTitle: findMovieObjectByTitle,
@@ -585,10 +532,6 @@ const View  = (function(){
         	$("#editMovieModal").modal("show");
         	fillEditMovieModal(datasetTitle);
         }
-        // Rate button was clicked
-        // else if(clickedItem.classList.contains('rateButton') === true){
-        // 	console.log("RATE");
-        // }
     }
     e.stopPropagation();
 	}
@@ -636,36 +579,149 @@ const View  = (function(){
 	}
 
 
-	function appendStarRating(){
-		var myStars = document.getElementById('mystars');
+/**
+ * Change rating select options to stars
+ */
+	function starRating(){
+		var movieList = document.getElementById('movieList');
+		
+			 $(document).ready(function(){
 
-		var thisMovieRating = MovieDatabase.getRating(MovieDatabase.movies[0]);
-  	console.log(thisMovieRating);
+					// Star rating on all selects in movieList
+					$('#movieList select').barrating({
+						theme: 'css-stars',
+						initialRating: null,    			// Default: Use the selected option 
+						showSelectedRating: false,
+						onSelect:function(value, text, event){
 
-		var htmlChunk = `<div class="stars stars-example-fontawesome-o">
-									    <select id="example-fontawesome-o" name="rating" data-current-rating="5.6" autocomplete="off">
-									      <option value=""></option>
-									      <option value="1">1</option>
-									      <option value="2">2</option>
-									      <option value="3">3</option>
-									      <option value="4">4</option>
-									      <option value="5">5</option>
-									      <option value="6">6</option>
-									      <option value="7">7</option>
-									      <option value="8">8</option>
-									      <option value="9">9</option>
-									      <option value="10">10</option>
-									    </select>
-									    <span class="title current-rating">
-									      Current rating: <span class="value"></span>
-									    </span>
-									    <span class="title your-rating hidden">
-									      Your rating: <span class="value"></span>&nbsp;
-									      <a href="#" class="clear-rating"><i class="fa fa-times-circle"></i></a>
-									    </span>
-									  </div>`;
-	myStars.innerHTML = htmlChunk;
+							// Get movie div of clicked select
+							var movieDiv = event.target.closest('.movie');
+							
+							// Get dataset title and id
+							var datasetTitle = movieDiv.getAttribute('data-title');
+							var movieId = movieDiv.id;
+
+							// Find movie object in database
+							var movie = MovieDatabase.findMovieObjectByTitle(datasetTitle);
+							
+							// Add rating to movie object (value=number of the clicked star)
+							MovieDatabase.rateMovie(movie, value);
+
+							// Hide "Current rating: x"
+							movieDiv.querySelector('.current-rating').className = "title current-rating hidden";
+
+							// Append "Your rating: x"
+							movieDiv.querySelector('.your-rating').className = "title your-rating";
+							movieDiv.querySelector('.your-rating span').innerHTML = value;
+													
+						}, 
+						onClear: function(value, text) {
+
+							var movieDiv = event.target.closest('.movie');
+
+							// Get dataset title and id
+							var datasetTitle = movieDiv.getAttribute('data-title');
+							var movieId = movieDiv.id;
+
+							// Find movie object in database
+							var movie = MovieDatabase.findMovieObjectByTitle(datasetTitle);
+							
+							// Remove rating
+							MovieDatabase.removeRating(movie);
+
+							// Get rating
+							var rating = MovieDatabase.getRating(movie);
+
+							// Append "Current rating: x"
+							movieDiv.querySelector('.current-rating').className = "title current-rating";
+							movieDiv.querySelector('.current-rating span').innerHTML = rating;
+
+							// Hide "Your rating: x"
+							movieDiv.querySelector('.your-rating').className = "title your-rating hidden";
+
+						
+            }
+					});
+
+					// Apply click function on cancel-button
+	        $('#movieList .clear-rating').on('click', function(event) {
+	            event.preventDefault();
+
+	            // Get movie object from database
+	            var movieDiv = event.target.closest('.movie');
+							var datasetTitle = movieDiv.getAttribute('data-title');
+							var movieId = movieDiv.id;
+							var movie = MovieDatabase.findMovieObjectByTitle(datasetTitle);
+
+							// Get rating and remove decimals
+	            var rating = MovieDatabase.getRating(movie);
+							var fixedRating = parseInt(parseInt(rating).toFixed());
+
+							// Update selected option
+							var ratingHtml = View.createRatingHtml(movie);
+							movieDiv.querySelector('select').innerHTML = ratingHtml;
+							movieDiv.querySelector('select').dataset.currentRating = rating;	
+
+							// Update stars
+							var stars = movieDiv.querySelectorAll('.br-widget a');
+							stars[4].className += "hello";
+							
+
+	           	// Clear and put new rating
+	            $("#"+movieId + " select")
+								.barrating("clear")
+								.barrating();
+	        });
+
+			 });			
+
+
+
+
+
+
+
+		//}
+		
 	}
+
+
+	function createRatingHtml(movie){
+
+		var rating = MovieDatabase.getRating(movie);
+		//var id = 'movie'+moviesArray.indexOf(movie);
+		
+		// Convert to number to be able to use toFixed() and remove decimals, and convert back to number
+		var fixedRating = parseInt(parseInt(rating).toFixed());
+
+		var optionHtml = '';
+
+		for(let i = 1; i <= 5; i++){
+
+			if(i === fixedRating){
+				optionHtml += `<option value="${i}" selected="selected">${i}</option>`;
+			}
+			else {
+				optionHtml += `<option value="${i}">${i}</option>`;
+			}
+			
+		}
+
+		var ratingHtml = `
+											<select id="movie1" class="ratingSelect" name="rating" data-current-rating="${rating}" autocomplete="off">
+												${optionHtml}
+											</select> 
+			                <span class="title current-rating">
+			                  <small>Current rating: <span class="value">${rating}</span></small>
+			                </span>
+			                <span class="title your-rating hidden">
+			                  <small>Your rating: <span class="value"></span>&nbsp;
+			                  <img src="dist/images/cancel.svg" class="clear-rating cancel-icon"></small>
+			                </span>
+											`;
+		return ratingHtml;
+	}
+
 
 
 	return {
@@ -678,18 +734,13 @@ const View  = (function(){
 		resetInputs: resetInputs,
 		appendTopLists: appendTopLists,
 		addClickEventsToMovies: addClickEventsToMovies,
-
-		//appendCounter: appendCounter,
-		appendStarRating: appendStarRating
+		starRating: starRating,
+		createRatingHtml: createRatingHtml
 
 	// end of return
 	};
 
 // end of View
 })();
-
-
-
-    	
 
 
