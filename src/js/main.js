@@ -236,8 +236,6 @@ const MovieDatabase  = (function(){
 		movie.ratings.pop();
 	}
 
-
-
 	/**
 	 * Create an array of movie genres based on which checkboxes are checked  
 	 * @param  {Node} select 
@@ -287,7 +285,7 @@ const MovieDatabase  = (function(){
 		else {
 			const newMovie = new Movie(title.value, year.value, genres, [], description.value, 'http://images.clipartpanda.com/movie-border-clipart-movie_title_border.png');
 			movies.push(newMovie);
-			View.appendMovies([movies[movies.length-1]]); 	//Load the new movie list
+			View.appendMovies([movies[movies.length-1]]); 	//Load the new movie 
 			View.resetInputs();
 		}
 	} 
@@ -512,9 +510,9 @@ const View  = (function(){
 		// Append movie list to index.html
 		movieList.innerHTML = htmlChunk;
 
-	View.appendNumberOfMovies(moviesArray);
-	View.addClickEventsToMovies(); 						//Add click events
-  View.starRating();
+		View.appendNumberOfMovies(moviesArray);		//Display "x of x movies"
+		View.addClickEventsToMovies(); 						//Add click events
+	  View.starRating();												//Display select options as stars
 	}
 
 	/**
@@ -590,7 +588,7 @@ const View  = (function(){
 
 
 /**
- * Change rating select options to stars
+ * Change rating select options to stars (jQuery Bar Rating)
  */
 	function starRating(){
 		var movieList = document.getElementById('movieList');
@@ -673,19 +671,8 @@ const View  = (function(){
 								.barrating("clear")
 								.barrating();
 	        });
-
-			 });			
-
-
-
-
-
-
-
-		//}
-		
+			 });					
 	}
-
 
 	function createRatingHtml(movie){
 
@@ -697,14 +684,12 @@ const View  = (function(){
 		var optionHtml = '';
 
 		for(let i = 1; i <= 5; i++){
-
 			if(i === fixedRating){
 				optionHtml += `<option value="${i}" selected="selected">${i}</option>`;
 			}
 			else {
 				optionHtml += `<option value="${i}">${i}</option>`;
 			}
-			
 		}
 
 		var ratingHtml = `
@@ -722,7 +707,10 @@ const View  = (function(){
 		return ratingHtml;
 	}
 
-
+	/**
+	 * Show number of movies displayed out of the total number of movies in the database
+	 * @param  {Array} movies 	Appended movies
+	 */
 	function appendNumberOfMovies(movies){
 		var numberOfMoviesDiv = document.getElementById('numberOfMoviesDiv');
 		var numberOfMovies = movies.length;
