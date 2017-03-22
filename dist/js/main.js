@@ -23,11 +23,11 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
 	// Reset button event
 	document.getElementById('resetButton').addEventListener('click', function () {
-		MovieDatabase.appendMovies();
+		View.appendMovies();
 		View.resetInputs();
 	});
 	document.getElementById('logo').addEventListener('click', function () {
-		MovieDatabase.appendMovies();
+		View.appendMovies();
 		View.resetInputs();
 	});
 
@@ -36,9 +36,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 	View.fillSelectWithYears(document.getElementById('yearSortSelect'));
 	View.fillSelectWithYears(document.getElementById('year'));
 
-	MovieDatabase.appendMovies(); //Fill index with movies
-	View.addClickEventsToMovies(); //Add click events
-	View.starRating();
+	View.appendMovies(); //Fill index with movies
 });
 
 /**
@@ -229,85 +227,6 @@ var MovieDatabase = function () {
 	}
 
 	/**
-  * Append movies to index.html
-  * @param  {Array} moviesArray 		Array of movie objects
-  */
-	function appendMovies(moviesArray) {
-		var movieList = document.getElementById('movieList');
-		var htmlChunk = '';
-
-		// Show all movies if no filter is choosen
-		if (moviesArray === undefined) {
-			moviesArray = movies;
-		}
-		// Show error message if there is no movies to display
-		else if (moviesArray.length === 0) {
-				htmlChunk = '<div class="alert alert-danger message" role="alert">No movies to display. </div>';
-				movieList.innerHTML = htmlChunk;
-			}
-
-		// Create html for all movies
-		var _iteratorNormalCompletion = true;
-		var _didIteratorError = false;
-		var _iteratorError = undefined;
-
-		try {
-			for (var _iterator = moviesArray[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-				var movie = _step.value;
-
-
-				// Create genre list badges
-				var genreHtml = '';
-				var _iteratorNormalCompletion2 = true;
-				var _didIteratorError2 = false;
-				var _iteratorError2 = undefined;
-
-				try {
-					for (var _iterator2 = movie.genres[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-						var genre = _step2.value;
-
-						genreHtml += '<h6 class="genre-badge"><span class="badge badge-default">' + genre + '</span></h6>';
-					}
-				} catch (err) {
-					_didIteratorError2 = true;
-					_iteratorError2 = err;
-				} finally {
-					try {
-						if (!_iteratorNormalCompletion2 && _iterator2.return) {
-							_iterator2.return();
-						}
-					} finally {
-						if (_didIteratorError2) {
-							throw _iteratorError2;
-						}
-					}
-				}
-
-				var id = 'movie' + moviesArray.indexOf(movie);
-				var ratingHtml = View.createRatingHtml(movie);
-
-				htmlChunk += '<div class="movie col-xs-6 col-sm-6 col-md-4 col-lg-3" data-title="' + movie.title + '" id="' + id + '">\n\t\t\t\t\t\t\t<div class="panel panel-default">\n\t\t\t\t\t\t\t\t<div class="panel-heading"><h5>' + movie.title + '</h5></div>\n\t\t\t\t\t\t\t\t<div class="panel-body my-movie movie-box">\n\t\t\t\t\t\t\t\t\t<figure class="img-figure" onclick="void(0)">\n\t\t\t\t\t\t\t\t\t\t<img src="' + movie.image + '" class="img-fluid poster" alt="' + movie.title + '"> <br>\n\t\t\t\t\t\t\t\t\t</figure>\n\t\t\t\t\t\t\t\t\t<div class="movie-description">\n\t\t\t\t\t\t\t\t\t\t<div>' + genreHtml + '<br><br></div>\n\t\t\t\t\t\t\t\t\t\t<div><h6 class="genre-badge"><span class="badge badge-default">' + movie.year + '</span></h6> ' + movie.description + '\n\t\t\t\t\t\t\t\t\t\t<img src="dist/images/edit.svg" class="editButton edit-icon" alt="Edit"></div> <br>\n\t\t\t\t\t\t\t\t\t\t<div class="star-rating center">' + ratingHtml + '</div> <br>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>';
-			}
-			// Append movie list to index.html
-		} catch (err) {
-			_didIteratorError = true;
-			_iteratorError = err;
-		} finally {
-			try {
-				if (!_iteratorNormalCompletion && _iterator.return) {
-					_iterator.return();
-				}
-			} finally {
-				if (_didIteratorError) {
-					throw _iteratorError;
-				}
-			}
-		}
-
-		movieList.innerHTML = htmlChunk;
-	}
-
-	/**
   * Create an array of movie genres based on which checkboxes are checked  
   * @param  {Node} select 
   * @return {Array}        Array of movie genres
@@ -354,7 +273,7 @@ var MovieDatabase = function () {
 		} else {
 			var newMovie = new Movie(title.value, year.value, genres, [], description.value, 'http://images.clipartpanda.com/movie-border-clipart-movie_title_border.png');
 			movies.push(newMovie);
-			MovieDatabase.appendMovies([movies[movies.length - 1]]); //Load the new movie list
+			View.appendMovies([movies[movies.length - 1]]); //Load the new movie list
 			View.resetInputs();
 		}
 	}
@@ -378,7 +297,7 @@ var MovieDatabase = function () {
 		movie.genres = MovieDatabase.getCheckedElements(genresEditList);
 
 		// Update View
-		MovieDatabase.appendMovies();
+		View.appendMovies();
 	}
 
 	/**
@@ -387,6 +306,10 @@ var MovieDatabase = function () {
   */
 	function returnGenresArray() {
 		return genres;
+	}
+
+	function returnMoviesArray() {
+		return movies;
 	}
 
 	return {
@@ -399,14 +322,14 @@ var MovieDatabase = function () {
 		getWorstRatedMovie: getWorstRatedMovie,
 		rateMovie: rateMovie,
 		removeRating: removeRating,
-		appendMovies: appendMovies,
 		getCheckedElements: getCheckedElements,
 		findMovieObjectByTitle: findMovieObjectByTitle,
 		addMovie: addMovie,
 		saveEditedMovie: saveEditedMovie,
+		genres: returnGenresArray,
+		movies: returnMoviesArray
 
-		genres: returnGenresArray
-
+		// end of return
 	};
 
 	// end of MovieDatabase
@@ -424,7 +347,7 @@ var View = function () {
 		var select = document.getElementById('genresSortList');
 		var checked = MovieDatabase.getCheckedElements(select);
 		var movies = MovieDatabase.getMoviesByGenre(checked);
-		MovieDatabase.appendMovies(movies);
+		View.appendMovies(movies);
 	}
 
 	/**
@@ -434,7 +357,7 @@ var View = function () {
 		var fromRating = parseInt(document.getElementById('fromRatingSortSelect').value);
 		var toRating = parseInt(document.getElementById('toRatingSortSelect').value);
 		var moviesThisRatings = MovieDatabase.getMoviesThisRatings(fromRating, toRating);
-		MovieDatabase.appendMovies(moviesThisRatings);
+		View.appendMovies(moviesThisRatings);
 	}
 
 	/**
@@ -442,10 +365,10 @@ var View = function () {
   */
 	function sortByYear() {
 		if (this.value === 'all') {
-			MovieDatabase.appendMovies();
+			View.appendMovies();
 		} else {
 			var moviesThisYear = MovieDatabase.getMoviesThisYear(this.value);
-			MovieDatabase.appendMovies(moviesThisYear);
+			View.appendMovies(moviesThisYear);
 		}
 	}
 
@@ -457,29 +380,29 @@ var View = function () {
 		var allGenres = MovieDatabase.genres();
 
 		var htmlChunk = '';
-		var _iteratorNormalCompletion3 = true;
-		var _didIteratorError3 = false;
-		var _iteratorError3 = undefined;
+		var _iteratorNormalCompletion = true;
+		var _didIteratorError = false;
+		var _iteratorError = undefined;
 
 		try {
-			for (var _iterator3 = allGenres[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-				var genre = _step3.value;
+			for (var _iterator = allGenres[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+				var genre = _step.value;
 
 				htmlChunk += '\n\t\t\t\t<label class="checkbox-inline"><input type="checkbox" id="' + genre + '" value="' + genre + '"> ' + genre + '</label> ';
 			}
 
 			// Append to html
 		} catch (err) {
-			_didIteratorError3 = true;
-			_iteratorError3 = err;
+			_didIteratorError = true;
+			_iteratorError = err;
 		} finally {
 			try {
-				if (!_iteratorNormalCompletion3 && _iterator3.return) {
-					_iterator3.return();
+				if (!_iteratorNormalCompletion && _iterator.return) {
+					_iterator.return();
 				}
 			} finally {
-				if (_didIteratorError3) {
-					throw _iteratorError3;
+				if (_didIteratorError) {
+					throw _iteratorError;
 				}
 			}
 		}
@@ -537,6 +460,93 @@ var View = function () {
 		//Add the html chunks to the div-elements 
 		highestRatingList.innerHTML = highestRatingHtmlChunk;
 		lowestRatingList.innerHTML = lowestRatingHtmlChunk;
+	}
+
+	/**
+  * Append movies to index.html
+  * @param  {Array} moviesArray 		Array of movie objects
+  */
+	function appendMovies(moviesArray) {
+		var movieList = document.getElementById('movieList');
+		var htmlChunk = '';
+
+		// Show all movies if no filter is choosen
+		if (moviesArray === undefined) {
+			moviesArray = MovieDatabase.movies();
+		}
+		// Show error message if there is no movies to display
+		else if (moviesArray.length === 0) {
+				htmlChunk = '<div class="alert alert-danger message" role="alert">No movies to display. </div>';
+				movieList.innerHTML = htmlChunk;
+			}
+
+		// Create html for all movies
+		var _iteratorNormalCompletion2 = true;
+		var _didIteratorError2 = false;
+		var _iteratorError2 = undefined;
+
+		try {
+			for (var _iterator2 = moviesArray[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+				var movie = _step2.value;
+
+
+				// Create genre list badges
+				var genreHtml = '';
+				var _iteratorNormalCompletion3 = true;
+				var _didIteratorError3 = false;
+				var _iteratorError3 = undefined;
+
+				try {
+					for (var _iterator3 = movie.genres[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+						var genre = _step3.value;
+
+						genreHtml += '<h6 class="genre-badge"><span class="badge badge-default">' + genre + '</span></h6>';
+					}
+
+					// Create id
+				} catch (err) {
+					_didIteratorError3 = true;
+					_iteratorError3 = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion3 && _iterator3.return) {
+							_iterator3.return();
+						}
+					} finally {
+						if (_didIteratorError3) {
+							throw _iteratorError3;
+						}
+					}
+				}
+
+				var id = 'movie' + moviesArray.indexOf(movie);
+
+				// Create select with rating options
+				var ratingHtml = View.createRatingHtml(movie);
+
+				htmlChunk += '<div class="movie col-xs-6 col-sm-6 col-md-4 col-lg-3" data-title="' + movie.title + '" id="' + id + '">\n\t\t\t\t\t\t\t<div class="panel panel-default">\n\t\t\t\t\t\t\t\t<div class="panel-heading"><h5>' + movie.title + '</h5></div>\n\t\t\t\t\t\t\t\t<div class="panel-body movie-box">\n\t\t\t\t\t\t\t\t\t<figure class="img-figure" onclick="void(0)">\n\t\t\t\t\t\t\t\t\t\t<img src="' + movie.image + '" class="img-fluid poster" alt="' + movie.title + '"> <br>\n\t\t\t\t\t\t\t\t\t</figure>\n\t\t\t\t\t\t\t\t\t<div class="movie-description">\n\t\t\t\t\t\t\t\t\t\t<div>' + genreHtml + '<br><br></div>\n\t\t\t\t\t\t\t\t\t\t<div><h6 class="genre-badge"><span class="badge badge-default">' + movie.year + '</span></h6> ' + movie.description + '\n\t\t\t\t\t\t\t\t\t\t<img src="dist/images/edit.svg" class="editButton edit-icon" alt="Edit"></div> <br>\n\t\t\t\t\t\t\t\t\t\t<div class="star-rating center">' + ratingHtml + '</div> <br>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>';
+			}
+			// Append movie list to index.html
+		} catch (err) {
+			_didIteratorError2 = true;
+			_iteratorError2 = err;
+		} finally {
+			try {
+				if (!_iteratorNormalCompletion2 && _iterator2.return) {
+					_iterator2.return();
+				}
+			} finally {
+				if (_didIteratorError2) {
+					throw _iteratorError2;
+				}
+			}
+		}
+
+		movieList.innerHTML = htmlChunk;
+
+		View.appendNumberOfMovies(moviesArray);
+		View.addClickEventsToMovies(); //Add click events
+		View.starRating();
 	}
 
 	/**
@@ -658,6 +668,7 @@ var View = function () {
 
 					// Add rating to movie object (value=number of the clicked star)
 					MovieDatabase.rateMovie(movie, value);
+					console.log("Added rating (" + value + ") to movie");
 
 					// Hide "Current rating: x"
 					movieDiv.querySelector('.current-rating').className = "title current-rating hidden";
@@ -665,6 +676,9 @@ var View = function () {
 					// Append "Your rating: x"
 					movieDiv.querySelector('.your-rating').className = "title your-rating";
 					movieDiv.querySelector('.your-rating span').innerHTML = value;
+
+					// Only rate once
+					$("#" + movieId + " select").barrating('readonly', true);
 				},
 				onClear: function onClear(value, text) {
 
@@ -677,8 +691,9 @@ var View = function () {
 					// Find movie object in database
 					var movie = MovieDatabase.findMovieObjectByTitle(datasetTitle);
 
-					// Remove rating
+					// Undo rating
 					MovieDatabase.removeRating(movie);
+					console.log("Undo rating");
 
 					// Get rating
 					var rating = MovieDatabase.getRating(movie);
@@ -689,6 +704,9 @@ var View = function () {
 
 					// Hide "Your rating: x"
 					movieDiv.querySelector('.your-rating').className = "title your-rating hidden";
+
+					// Only rate once remove
+					$("#" + movieId + " select").barrating('readonly', false);
 				}
 			});
 
@@ -698,22 +716,7 @@ var View = function () {
 
 				// Get movie object from database
 				var movieDiv = event.target.closest('.movie');
-				var datasetTitle = movieDiv.getAttribute('data-title');
 				var movieId = movieDiv.id;
-				var movie = MovieDatabase.findMovieObjectByTitle(datasetTitle);
-
-				// Get rating and remove decimals
-				var rating = MovieDatabase.getRating(movie);
-				var fixedRating = parseInt(parseInt(rating).toFixed());
-
-				// Update selected option
-				var ratingHtml = View.createRatingHtml(movie);
-				movieDiv.querySelector('select').innerHTML = ratingHtml;
-				movieDiv.querySelector('select').dataset.currentRating = rating;
-
-				// Update stars
-				var stars = movieDiv.querySelectorAll('.br-widget a');
-				stars[4].className += "hello";
 
 				// Clear and put new rating
 				$("#" + movieId + " select").barrating("clear").barrating();
@@ -726,7 +729,6 @@ var View = function () {
 	function createRatingHtml(movie) {
 
 		var rating = MovieDatabase.getRating(movie);
-		//var id = 'movie'+moviesArray.indexOf(movie);
 
 		// Convert to number to be able to use toFixed() and remove decimals, and convert back to number
 		var fixedRating = parseInt(parseInt(rating).toFixed());
@@ -746,6 +748,14 @@ var View = function () {
 		return ratingHtml;
 	}
 
+	function appendNumberOfMovies(movies) {
+		var numberOfMoviesDiv = document.getElementById('numberOfMoviesDiv');
+		var numberOfMovies = movies.length;
+		var totalNumberOfMovies = MovieDatabase.movies().length;
+		var htmlChunk = '<div class="col text-center">Showing ' + numberOfMovies + ' of ' + totalNumberOfMovies + ' movies</div>';
+		numberOfMoviesDiv.innerHTML = htmlChunk;
+	}
+
 	return {
 
 		sortByGenre: sortByGenre,
@@ -755,9 +765,11 @@ var View = function () {
 		fillSelectWithYears: fillSelectWithYears,
 		resetInputs: resetInputs,
 		appendTopLists: appendTopLists,
+		appendMovies: appendMovies,
 		addClickEventsToMovies: addClickEventsToMovies,
 		starRating: starRating,
-		createRatingHtml: createRatingHtml
+		createRatingHtml: createRatingHtml,
+		appendNumberOfMovies: appendNumberOfMovies
 
 		// end of return
 	};
