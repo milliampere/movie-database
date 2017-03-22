@@ -13,7 +13,7 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 
 	<!-- jQuery Bar Rating -->
-	<link rel="stylesheet" href="node_modules/jquery-bar-rating/dist/themes/css-stars.css" />
+	<link rel="stylesheet" href="dist/css/css-stars.css" />
 
 	<!-- Custom style -->
 	<link rel="stylesheet" href="dist/css/main.min.css">
@@ -23,12 +23,9 @@
 
 	<div class="wrap mx-auto">
 		<header>
-			<nav class="navbar navbar-toggleable-md navbar-light bg-faded">
-			  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-			    <span class="navbar-toggler-icon"></span>
-			  </button>
-			  <div class="collapse navbar-collapse" id="navbarNavDropdown">
-			    <ul class="navbar-nav mr-auto">
+			<nav class="navbar navbar-light bg-faded justify-content-between flex-nowrap flex-row">
+
+			    <ul class="navbar-nav justify-content-start flex-nowrap flex-row">
 
 			    	<!-- Home -->
 			      <li class="nav-item active">
@@ -53,11 +50,11 @@
 			    </ul>
 
 					<!-- Add new movie button -->
-			    <form class="form-inline pull-xs-right">
+			    <form class="form-inline">
 			    	<button class="btn btn-sm align-middle btn-info" type="button" data-toggle="modal" data-target="#addMovieModal">Add new movie</button>
 			  	</form>
 
-			  </div>
+			  
 			</nav>
 
 
@@ -190,7 +187,7 @@
 	</div> <!-- End of wrapper -->
 
 	<script src="dist/js/main.js"></script>
-	<script src="node_modules/jquery-bar-rating/dist/jquery.barrating.min.js"></script>
+	<script src="dist/js/jquery.barrating.min.js"></script>
 
 </body>
 </html>
