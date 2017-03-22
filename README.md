@@ -8,7 +8,7 @@ In this project I've used Sass, ES6 (compiled with Babel), Bootstrap and jQuery 
 
 ## Links
 
-[Website](https://milliampere.github.io/movie-database)
-[Source code](https://github.com/milliampere/movie-database)
+* [Website](https://milliampere.github.io/movie-database) 
+* [Source code](https://github.com/milliampere/movie-database)
 
  
